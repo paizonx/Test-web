@@ -41,43 +41,47 @@ a { text-decoration: none; color: inherit; }
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding-bottom: 50px; }
 
 /* Kartu Video */
-.vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; }
+.vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; cursor: pointer; }
 .vid-card:hover { transform: translateY(-5px); border-color: var(--accent); }
 
-/* THUMBNAIL AREA (Updated for Video Preview) */
+/* THUMBNAIL AREA */
 .thumb-area { 
   width: 100%; aspect-ratio: 16/9; 
   background-color: #000; 
   position: relative; 
-  overflow: hidden; /* Penting agar video tidak keluar garis */
+  overflow: hidden;
   display: flex; align-items: center; justify-content: center; 
 }
 
-/* Background Image (Default) */
+/* 1. Gambar Background */
 .thumb-bg {
   position: absolute; inset: 0;
   background-position: center; background-size: cover; background-repeat: no-repeat;
   transition: opacity 0.3s ease;
-  z-index: 1;
+  z-index: 10; /* Gambar di depan */
 }
 /* Overlay gelap */
 .thumb-bg::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
 
-/* Video Preview (Hidden by default) */
+/* 2. Video Preview (Disembunyikan dlm style default) */
 .preview-vid {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; /* Agar video full kotak */
-  z-index: 0; opacity: 0; transition: opacity 0.3s ease;
+  object-fit: cover; 
+  z-index: 5; /* Video di belakang gambar */
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none; /* Agar klik tetap tembus ke link */
 }
 
-/* Hover Effects */
-.vid-card:hover .thumb-bg { opacity: 0; } /* Sembunyikan gambar saat hover */
-.vid-card:hover .preview-vid { opacity: 1; z-index: 2; } /* Munculkan video saat hover */
+/* 3. Icon Play */
+.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 20; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; transition: opacity 0.2s;}
 
-.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 3; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
-.play-icon svg { width: 18px; height: 18px; fill: white; margin-left: 3px; }
+/* EFFEK HOVER: Video Naik, Gambar Turun */
+.vid-card.hovering .thumb-bg { opacity: 0; } /* Gambar hilang */
+.vid-card.hovering .preview-vid { opacity: 1; z-index: 15; } /* Video muncul & naik keatas */
+.vid-card.hovering .play-icon { opacity: 0; } /* Icon play hilang biar bersih */
 
-.card-info { padding: 12px; position: relative; z-index: 4; background: var(--bg-card); }
+.card-info { padding: 12px; position: relative; z-index: 30; background: var(--bg-card); }
 .vid-title { font-size: 13px; font-weight: 600; margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .badge { font-size: 10px; background: #1e3a8a; color: #93c5fd; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; font-weight: bold; }
 
@@ -204,19 +208,36 @@ function injectAds() {
     } catch(e) { console.log("Adblocker detected"); }
 }
 
-// PREVIEW FUNCTIONS (HOVER TO PLAY)
-function startPreview(el) {
-    const v = el.querySelector('video');
+// --- LOGIKA PREVIEW VIDEO ---
+function startPreview(card) {
+    // Tambahkan class agar CSS bekerja
+    card.classList.add('hovering');
+    
+    // Cari elemen video di dalam kartu ini
+    const v = card.querySelector('video');
     if(v) {
-        v.currentTime = 0; // Mulai dari 0 detik
-        v.play().catch(e => {}); // Ignore error jika browser blokir autoplay
+        v.currentTime = 0; // Reset ke awal
+        
+        // PENTING: Promise handling agar tidak error di console
+        var playPromise = v.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+              // Video berputar
+            })
+            .catch(error => {
+              console.log("Autoplay preview diblokir browser (perlu interaksi user)");
+            });
+        }
     }
 }
-function stopPreview(el) {
-    const v = el.querySelector('video');
+
+function stopPreview(card) {
+    card.classList.remove('hovering');
+    
+    const v = card.querySelector('video');
     if(v) {
         v.pause();
-        v.currentTime = 0; // Reset ke awal
+        v.currentTime = 0;
     }
 }
 
@@ -251,28 +272,27 @@ async function loadVideos() {
       
       let badge = "VIDEY";
       let thumbUrl = ""; 
-      let videoTag = ""; // Tag video untuk preview
+      let videoTag = ""; 
 
       if(id.length > 9 || id.startsWith('k')) {
-         // Dailymotion: Tidak support preview MP4 langsung (berat), jadi cuma gambar
          badge = "DM";
          thumbUrl = `https://www.dailymotion.com/thumbnail/video/${id}`;
+         // Dailymotion tidak bisa preview instan
       } else {
-         // Videy: Support Preview
          badge = "VIDEY";
          thumbUrl = `https://cdn.videy.co/${id}.jpg`;
-         // Inject Video Tag (Muted & Loop Wajib untuk Autoplay Preview)
-         videoTag = `<video src="https://cdn.videy.co/${id}.mp4" muted loop playsinline preload="none" class="preview-vid"></video>`;
+         
+         // PRELOAD=METADATA agar lebih cepat
+         // MUTED=MUTED wajib agar chrome mengizinkan autoplay hover
+         videoTag = `<video src="https://cdn.videy.co/${id}.mp4" muted="muted" loop playsinline preload="metadata" class="preview-vid"></video>`;
       }
 
+      // PERHATIKAN: onmouseenter dipindah ke elemen pembungkus 'vid-card'
       html += `
-        <a href="?id=${id}" class="vid-card">
-          <div class="thumb-area" onmouseenter="startPreview(this)" onmouseleave="stopPreview(this)">
-            
+        <a href="?id=${id}" class="vid-card" onmouseenter="startPreview(this)" onmouseleave="stopPreview(this)">
+          <div class="thumb-area">
             <div class="thumb-bg" style="background-image: url('${thumbUrl}');"></div>
-            
             ${videoTag}
-
             <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
           <div class="card-info">
