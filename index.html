@@ -26,11 +26,21 @@ body{
 }
 a{text-decoration:none;color:inherit}
 .container{max-width:1100px;margin:auto;padding:0 20px}
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid var(--border)}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 0;
+  border-bottom:1px solid var(--border)
+}
 .brand{font-weight:800;font-size:20px}
 .brand span{color:var(--accent)}
 
-.hero{padding:30px 0;border-bottom:1px solid var(--border)}
+.hero{
+  padding:30px 0;
+  border-bottom:1px solid var(--border)
+}
 .hero h1{margin:0 0 6px;font-size:28px}
 .hero p{margin:0;color:var(--muted);font-size:14px}
 
@@ -38,7 +48,7 @@ a{text-decoration:none;color:inherit}
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
   gap:15px;
-  margin-top:20px;
+  margin-top:20px
 }
 
 .vid-card{
@@ -46,23 +56,26 @@ a{text-decoration:none;color:inherit}
   border:1px solid var(--border);
   border-radius:10px;
   overflow:hidden;
-  transition:.2s;
+  transition:.2s
 }
-.vid-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.vid-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--accent)
+}
 
 .thumb-area{
   position:relative;
   width:100%;
   aspect-ratio:16/9;
   background:#000 center/cover no-repeat;
-  overflow:hidden;
+  overflow:hidden
 }
 .thumb-area::after{
   content:"";
   position:absolute;
   inset:0;
   background:rgba(0,0,0,.15);
-  z-index:2;
+  z-index:2
 }
 
 /* VIDEO PREVIEW */
@@ -72,7 +85,7 @@ a{text-decoration:none;color:inherit}
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:1;
+  z-index:1
 }
 
 .play-icon{
@@ -81,7 +94,7 @@ a{text-decoration:none;color:inherit}
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:3;
+  z-index:3
 }
 .play-icon svg{
   width:46px;
@@ -89,7 +102,7 @@ a{text-decoration:none;color:inherit}
   background:rgba(255,255,255,.2);
   border-radius:50%;
   padding:12px;
-  fill:#fff;
+  fill:#fff
 }
 
 .card-info{padding:12px}
@@ -99,20 +112,20 @@ a{text-decoration:none;color:inherit}
   color:#93c5fd;
   padding:2px 6px;
   border-radius:4px;
-  font-weight:700;
+  font-weight:700
 }
 .vid-title{
   font-size:13px;
   font-weight:600;
   margin:6px 0 0;
-  line-height:1.4;
+  line-height:1.4
 }
 
 .footer{
   margin:40px 0 20px;
   text-align:center;
   color:#555;
-  font-size:12px;
+  font-size:12px
 }
 </style>
 </head>
@@ -149,6 +162,7 @@ async function loadVideos(){
 
   try{
     const res=await fetch('videos.txt?t='+Date.now());
+    if(!res.ok) throw new Error();
     const txt=await res.text();
     const lines=txt.split('\n');
 
@@ -187,7 +201,6 @@ async function loadVideos(){
             <video class="thumb-video"
               src="${mp4}"
               muted
-              loop
               playsinline
               preload="metadata"></video>
             <div class="play-icon">
@@ -206,7 +219,7 @@ async function loadVideos(){
     if(count){
       grid.innerHTML=html;
       status.style.display='none';
-      initGridAutoplay();
+      initGridPreview();
     }else{
       status.textContent='No videos';
     }
@@ -216,22 +229,35 @@ async function loadVideos(){
   }
 }
 
-function initGridAutoplay(){
+/* === PREVIEW VIDEO 2 DETIK SAJA === */
+function initGridPreview(){
   const vids=document.querySelectorAll('.thumb-video');
+
   const io=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       const v=e.target;
       if(e.isIntersecting){
+        v.currentTime=0;
         v.play().catch(()=>{});
+
+        if(v._timer) clearTimeout(v._timer);
+        v._timer=setTimeout(()=>{
+          v.pause();
+          v.currentTime=0;
+        },2000); // 2 DETIK
       }else{
         v.pause();
+        v.currentTime=0;
+        if(v._timer) clearTimeout(v._timer);
       }
     });
-  },{threshold:.25});
+  },{threshold:0.4});
+
   vids.forEach(v=>io.observe(v));
 }
 
 loadVideos();
 </script>
+
 </body>
 </html>
