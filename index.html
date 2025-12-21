@@ -5,129 +5,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 
-<title>VidStream Pro</title>
+<meta property="og:title" content="VidStream Pro - Trending Viral Videos">
+<meta property="og:description" content="Tonton koleksi video viral terbaru hari ini. Streaming cepat dan HD.">
+<meta property="og:image" content="https://cdn.videy.co/DEFAULT_THUMB.jpg">
+<meta property="og:url" content="https://test-web-7km.pages.dev/">
+<meta property="og:type" content="website">
 
+<title>VidStream Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg-main:#060b14;
-  --bg-card:#131b2e;
-  --accent:#2563eb;
-  --text:#fff;
-  --muted:#94a3b8;
-  --border:#1e293b;
+/* --- CSS STYLE --- */
+:root {
+  --bg-main: #060b14;
+  --bg-card: #131b2e;
+  --accent: #2563eb;
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
 }
-body{
-  margin:0;
-  background:var(--bg-main);
-  color:var(--text);
-  font-family:Inter,sans-serif;
-}
-a{text-decoration:none;color:inherit}
-.container{max-width:1100px;margin:auto;padding:0 20px}
+body { margin: 0; background-color: var(--bg-main); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
 
-.navbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 0;
-  border-bottom:1px solid var(--border)
-}
-.brand{font-weight:800;font-size:20px}
-.brand span{color:var(--accent)}
+/* Layout & Navbar */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.brand { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
+.brand span { color: var(--accent); }
 
-.hero{
-  padding:30px 0;
-  border-bottom:1px solid var(--border)
-}
-.hero h1{margin:0 0 6px;font-size:28px}
-.hero p{margin:0;color:var(--muted);font-size:14px}
+/* Hero Section */
+.hero { padding: 30px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.hero h1 { font-size: 28px; font-weight: 800; margin: 0 0 10px 0; }
+.hero p { color: var(--text-muted); margin: 0; font-size: 14px; }
 
-.gallery-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:15px;
-  margin-top:20px
-}
+/* Grid Video */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding-bottom: 50px; }
 
-.vid-card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:10px;
-  overflow:hidden;
-  transition:.2s
-}
-.vid-card:hover{
-  transform:translateY(-4px);
-  border-color:var(--accent)
-}
+/* Kartu Video */
+.vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; }
+.vid-card:hover { transform: translateY(-5px); border-color: var(--accent); }
 
-.thumb-area{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#000 center/cover no-repeat;
-  overflow:hidden
+.thumb-area { 
+  width: 100%; aspect-ratio: 16/9; background-color: #000;
+  position: relative; display: flex; align-items: center; justify-content: center;
 }
-.thumb-area::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.15);
-  z-index:2
-}
+.thumb-area::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
 
-/* VIDEO FRAME (DIAM) */
-.thumb-video{
+/* === FIX PREVIEW VIDEY === */
+.thumb-area video{
   position:absolute;
   inset:0;
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:1;
-  pointer-events:none;
 }
 
-.play-icon{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:3
-}
-.play-icon svg{
-  width:46px;
-  height:46px;
-  background:rgba(255,255,255,.2);
-  border-radius:50%;
-  padding:12px;
-  fill:#fff
-}
+.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 2; border: 1px solid rgba(255,255,255,0.3); }
+.play-icon svg { width: 18px; height: 18px; fill: white; margin-left: 3px; }
 
-.card-info{padding:12px}
-.badge{
-  font-size:10px;
-  background:#1e3a8a;
-  color:#93c5fd;
-  padding:2px 6px;
-  border-radius:4px;
-  font-weight:700
-}
-.vid-title{
-  font-size:13px;
-  font-weight:600;
-  margin:6px 0 0;
-  line-height:1.4
-}
+.card-info { padding: 12px; }
+.vid-title { font-size: 13px; font-weight: 600; margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.badge { font-size: 10px; background: #1e3a8a; color: #93c5fd; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; font-weight: bold; }
 
-.footer{
-  margin:40px 0 20px;
-  text-align:center;
-  color:#555;
-  font-size:12px
-}
+/* Player Page */
+#playerPage { display: none; margin-top: 20px; }
+.playerShell { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.playerShell.vertical { aspect-ratio: 9/16; max-width: 400px; margin: 0 auto; }
+video, iframe { width: 100%; height: 100%; position: absolute; inset: 0; border: 0; }
+.back-btn { cursor: pointer; color: var(--accent); margin-bottom: 15px; display: inline-block; font-weight: 600; }
+
+.footer { margin-top: 50px; padding: 20px; border-top: 1px solid var(--border); text-align: center; color: #555; font-size: 12px; }
 </style>
 </head>
 
@@ -135,97 +82,92 @@ a{text-decoration:none;color:inherit}
 <div class="container">
 
   <div class="navbar">
-    <div class="brand">VidStream<span>Pro</span></div>
-    <div style="font-size:12px;color:#aaa;cursor:pointer" onclick="location.reload()">Refresh</div>
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#2563eb"><rect width="24" height="24" rx="6"/></svg>
+      VidStream<span>Pro</span>
+    </div>
+    <div style="font-size:12px; color:#aaa; cursor:pointer;" onclick="location.reload()">Refresh</div>
   </div>
 
-  <div class="hero">
-    <h1>Trending Videos</h1>
-    <p>Koleksi video viral terbaru update harian.</p>
-  </div>
+  <div id="galleryPage">
+    <div class="hero">
+      <h1>Trending Videos</h1>
+      <p>Koleksi video viral terbaru update harian.</p>
+    </div>
 
-  <div id="statusMsg" style="padding:20px;text-align:center;color:#aaa">
-    Loading videos...
-  </div>
+    <div id="statusMsg" style="padding: 20px; text-align: center; color: #aaa; margin-bottom: 20px; border: 1px dashed #333;">
+      Sedang memuat daftar video...
+    </div>
 
-  <div class="gallery-grid" id="gridTarget"></div>
+    <div class="gallery-grid" id="gridTarget"></div>
+  </div>
 
   <div class="footer">
-    © 2024 VidStream Pro
+    &copy; 2024 VidStream Pro. All rights reserved.
   </div>
 
 </div>
 
 <script>
-async function loadVideos(){
-  const grid=document.getElementById('gridTarget');
-  const status=document.getElementById('statusMsg');
+async function loadVideos() {
+  const target = document.getElementById('gridTarget');
+  const statusMsg = document.getElementById('statusMsg');
 
-  try{
-    const res=await fetch('videos.txt?t='+Date.now());
-    if(!res.ok) throw new Error();
-    const txt=await res.text();
-    const lines=txt.split('\n');
+  try {
+    const res = await fetch('videos.txt?t=' + Date.now());
+    if(!res.ok) throw new Error("Gagal membaca videos.txt");
+    const text = await res.text();
 
-    let html='';
-    let count=0;
+    const lines = text.split('\n');
+    let html = '';
+    let found = 0;
 
-    lines.forEach(l=>{
-      if(l.trim().length<3) return;
+    lines.forEach(line => {
+      if(line.trim().length < 3) return;
+      const parts = line.split('|');
+      const id = parts[0].trim();
+      const title = parts[1] ? parts[1].trim() : 'Video Tanpa Judul';
 
-      const p=l.split('|');
-      const id=p[0].trim();
-      const title=p[1]?p[1].trim():'Video';
-
-      const isDM=(id.length>9||id.startsWith('k'));
-      const badge=isDM?'DM':'VIDEY';
+      const isDM = (id.length > 9 || id.startsWith('k'));
+      const badge = isDM ? "DM" : "VIDEY";
 
       if(isDM){
-        const thumb=`https://www.dailymotion.com/thumbnail/video/${id}`;
-        html+=`
-        <a href="?id=${id}" class="vid-card">
-          <div class="thumb-area" style="background-image:url('${thumb}')">
-            <div class="play-icon">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        const thumbUrl = `https://www.dailymotion.com/thumbnail/video/${id}`;
+        html += `
+          <a href="?id=${id}" class="vid-card">
+            <div class="thumb-area" style="background-image:url('${thumbUrl}')">
+              <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
             </div>
-          </div>
-          <div class="card-info">
-            <span class="badge">${badge}</span>
-            <p class="vid-title">${title}</p>
-          </div>
-        </a>`;
-      }else{
-        const mp4=`https://cdn.videy.co/${id}.mp4`;
-        html+=`
-        <a href="?id=${id}" class="vid-card">
-          <div class="thumb-area">
-            <video class="thumb-video"
-              src="${mp4}"
-              muted
-              playsinline
-              preload="metadata"></video>
-            <div class="play-icon">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <div class="card-info">
+              <span class="badge">${badge}</span>
+              <p class="vid-title">${title}</p>
             </div>
-          </div>
-          <div class="card-info">
-            <span class="badge">${badge}</span>
-            <p class="vid-title">${title}</p>
-          </div>
-        </a>`;
+          </a>`;
+      } else {
+        html += `
+          <a href="?id=${id}" class="vid-card">
+            <div class="thumb-area">
+              <video src="https://cdn.videy.co/${id}.mp4" muted playsinline preload="metadata"></video>
+              <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            </div>
+            <div class="card-info">
+              <span class="badge">${badge}</span>
+              <p class="vid-title">${title}</p>
+            </div>
+          </a>`;
       }
-      count++;
+      found++;
     });
 
-    if(count){
-      grid.innerHTML=html;
-      status.style.display='none';
-    }else{
-      status.textContent='No videos';
+    if(found){
+      target.innerHTML = html;
+      statusMsg.style.display = 'none';
+    } else {
+      statusMsg.textContent = "Daftar video kosong.";
     }
-
-  }catch(e){
-    status.textContent='ERROR loading videos';
+  } catch (err) {
+    statusMsg.innerHTML = "<b>ERROR:</b> " + err.message;
+    statusMsg.style.color = "red";
   }
 }
 
