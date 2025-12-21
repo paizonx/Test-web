@@ -7,13 +7,12 @@
 
 <meta property="og:title" content="VidStream Pro - Trending Viral Videos">
 <meta property="og:description" content="Tonton koleksi video viral terbaru hari ini. Streaming cepat dan HD.">
-<meta property="og:image" content="https://cdn.videy.co/DEFAULT_THUMB.jpg">
+<meta property="og:image" content="https://cdn.videy.co/DEFAULT_THUMB.jpg"> 
 <meta property="og:url" content="https://test-web-7km.pages.dev/">
 <meta property="og:type" content="website">
 
 <title>VidStream Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
 <style>
 /* --- CSS STYLE --- */
 :root {
@@ -45,25 +44,40 @@ a { text-decoration: none; color: inherit; }
 .vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; }
 .vid-card:hover { transform: translateY(-5px); border-color: var(--accent); }
 
+/* THUMBNAIL AREA (Updated for Video Preview) */
 .thumb-area { 
-  width: 100%; aspect-ratio: 16/9; background-color: #000;
-  position: relative; display: flex; align-items: center; justify-content: center;
-}
-.thumb-area::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
-
-/* === FIX PREVIEW VIDEY === */
-.thumb-area video{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+  width: 100%; aspect-ratio: 16/9; 
+  background-color: #000; 
+  position: relative; 
+  overflow: hidden; /* Penting agar video tidak keluar garis */
+  display: flex; align-items: center; justify-content: center; 
 }
 
-.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 2; border: 1px solid rgba(255,255,255,0.3); }
+/* Background Image (Default) */
+.thumb-bg {
+  position: absolute; inset: 0;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+/* Overlay gelap */
+.thumb-bg::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
+
+/* Video Preview (Hidden by default) */
+.preview-vid {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; /* Agar video full kotak */
+  z-index: 0; opacity: 0; transition: opacity 0.3s ease;
+}
+
+/* Hover Effects */
+.vid-card:hover .thumb-bg { opacity: 0; } /* Sembunyikan gambar saat hover */
+.vid-card:hover .preview-vid { opacity: 1; z-index: 2; } /* Munculkan video saat hover */
+
+.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 3; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
 .play-icon svg { width: 18px; height: 18px; fill: white; margin-left: 3px; }
 
-.card-info { padding: 12px; }
+.card-info { padding: 12px; position: relative; z-index: 4; background: var(--bg-card); }
 .vid-title { font-size: 13px; font-weight: 600; margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .badge { font-size: 10px; background: #1e3a8a; color: #93c5fd; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; font-weight: bold; }
 
@@ -74,13 +88,16 @@ a { text-decoration: none; color: inherit; }
 video, iframe { width: 100%; height: 100%; position: absolute; inset: 0; border: 0; }
 .back-btn { cursor: pointer; color: var(--accent); margin-bottom: 15px; display: inline-block; font-weight: 600; }
 
+/* Ad Containers */
+.ad-native-wrapper { margin: 30px 0; border: 1px dashed #333; padding: 10px; border-radius: 8px; text-align: center; min-height: 100px; display:flex; align-items:center; justify-content:center; background: #0a0f1c;}
+
 .footer { margin-top: 50px; padding: 20px; border-top: 1px solid var(--border); text-align: center; color: #555; font-size: 12px; }
 </style>
 </head>
-
 <body>
-<div class="container">
 
+<div class="container">
+  
   <div class="navbar">
     <div class="brand">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="#2563eb"><rect width="24" height="24" rx="6"/></svg>
@@ -98,8 +115,29 @@ video, iframe { width: 100%; height: 100%; position: absolute; inset: 0; border:
     <div id="statusMsg" style="padding: 20px; text-align: center; color: #aaa; margin-bottom: 20px; border: 1px dashed #333;">
       Sedang memuat daftar video...
     </div>
-
+    
     <div class="gallery-grid" id="gridTarget"></div>
+  </div>
+
+  <div id="playerPage">
+    <div class="back-btn" onclick="window.location.href=window.location.pathname">← Kembali</div>
+    
+    <div id="shell" class="playerShell">
+      <video id="vid" controls playsinline></video>
+      <iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+    
+    <h2 id="vidTitle" style="margin-top:15px; font-size:18px;">Now Playing</h2>
+    
+    <button id="dlBtn" style="background:var(--accent); color:white; border:none; padding:12px 20px; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold; width:100%; font-size:16px;">
+      Download Full Video HD
+    </button>
+
+    <div class="ad-native-wrapper">
+       <div id="container-54f40a4ce292a9187e0b9a0feb507f92"></div>
+    </div>
+    
+    <div id="histats-box" style="margin-top:20px; opacity:0.6; text-align:center;"></div>
   </div>
 
   <div class="footer">
@@ -109,14 +147,97 @@ video, iframe { width: 100%; height: 100%; position: absolute; inset: 0; border:
 </div>
 
 <script>
+/* --- CONFIG --- */
+const SMARTLINK = "https://harbourbreederdump.com/an29v43y4m?key=549781a632ef3b8389ad01c914a1ee3a";
+const q = new URLSearchParams(location.search);
+const vidId = q.get('id');
+const dmId = q.get('dm');
+
+// Global Error Handler
+window.onerror = function(message, source, lineno, colno, error) {
+    const statusMsg = document.getElementById('statusMsg');
+    if(statusMsg && statusMsg.style.display !== 'none') {
+        statusMsg.innerHTML = "<b>System Error:</b> " + message;
+        statusMsg.style.color = "red";
+    }
+};
+
+// Referensi
+const statusMsg = document.getElementById('statusMsg');
+const galleryPage = document.getElementById('galleryPage');
+const playerPage = document.getElementById('playerPage');
+const shell = document.getElementById('shell');
+const vid = document.getElementById('vid');
+const frame = document.getElementById('frame');
+
+// ROUTING
+if(vidId || dmId) {
+  galleryPage.style.display = 'none';
+  playerPage.style.display = 'block';
+  initPlayer();   
+  injectAds();    
+} else {
+  loadVideos();   
+}
+
+// ADS INJECTION
+function injectAds() {
+    try {
+        const popScript = document.createElement('script');
+        popScript.src = '//harbourbreederdump.com/2e/a1/21/2ea12153a74996b501c2507cb4eebc96.js';
+        document.body.appendChild(popScript);
+
+        const natScript = document.createElement('script');
+        natScript.src = '//harbourbreederdump.com/54f40a4ce292a9187e0b9a0feb507f92/invoke.js';
+        natScript.async = true;
+        natScript.setAttribute('data-cfasync', 'false');
+        document.body.appendChild(natScript);
+
+        const histatsDiv = document.getElementById('histats-box');
+        if(histatsDiv) {
+            const hsScript = document.createElement('script');
+            hsScript.type = 'text/javascript';
+            hsScript.async = true;
+            hsScript.text = `var _Hasync= _Hasync|| []; _Hasync.push(['Histats.start', '1,4654540,4,0,0,0,00010000']); _Hasync.push(['Histats.fasi', '1']); _Hasync.push(['Histats.track_hits', '']); (function() { var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true; hs.src = ('//s10.histats.com/js15_as.js'); (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs); })();`;
+            document.body.appendChild(hsScript);
+        }
+    } catch(e) { console.log("Adblocker detected"); }
+}
+
+// PREVIEW FUNCTIONS (HOVER TO PLAY)
+function startPreview(el) {
+    const v = el.querySelector('video');
+    if(v) {
+        v.currentTime = 0; // Mulai dari 0 detik
+        v.play().catch(e => {}); // Ignore error jika browser blokir autoplay
+    }
+}
+function stopPreview(el) {
+    const v = el.querySelector('video');
+    if(v) {
+        v.pause();
+        v.currentTime = 0; // Reset ke awal
+    }
+}
+
+// LOAD VIDEOS
 async function loadVideos() {
   const target = document.getElementById('gridTarget');
-  const statusMsg = document.getElementById('statusMsg');
+  
+  const timeout = setTimeout(() => {
+      if(statusMsg.style.display !== 'none') {
+          statusMsg.innerHTML = "<b>Koneksi Lambat.</b><br>Pastikan videos.txt ada.";
+          statusMsg.style.color = "orange";
+      }
+  }, 5000);
 
   try {
     const res = await fetch('videos.txt?t=' + Date.now());
     if(!res.ok) throw new Error("Gagal membaca videos.txt");
     const text = await res.text();
+    clearTimeout(timeout); 
+
+    if(text.trim().startsWith("<")) throw new Error("File videos.txt 404/Error.");
 
     const lines = text.split('\n');
     let html = '';
@@ -127,51 +248,79 @@ async function loadVideos() {
       const parts = line.split('|');
       const id = parts[0].trim();
       const title = parts[1] ? parts[1].trim() : 'Video Tanpa Judul';
+      
+      let badge = "VIDEY";
+      let thumbUrl = ""; 
+      let videoTag = ""; // Tag video untuk preview
 
-      const isDM = (id.length > 9 || id.startsWith('k'));
-      const badge = isDM ? "DM" : "VIDEY";
-
-      if(isDM){
-        const thumbUrl = `https://www.dailymotion.com/thumbnail/video/${id}`;
-        html += `
-          <a href="?id=${id}" class="vid-card">
-            <div class="thumb-area" style="background-image:url('${thumbUrl}')">
-              <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            </div>
-            <div class="card-info">
-              <span class="badge">${badge}</span>
-              <p class="vid-title">${title}</p>
-            </div>
-          </a>`;
+      if(id.length > 9 || id.startsWith('k')) {
+         // Dailymotion: Tidak support preview MP4 langsung (berat), jadi cuma gambar
+         badge = "DM";
+         thumbUrl = `https://www.dailymotion.com/thumbnail/video/${id}`;
       } else {
-        html += `
-          <a href="?id=${id}" class="vid-card">
-            <div class="thumb-area">
-              <video src="https://cdn.videy.co/${id}.mp4" muted playsinline preload="metadata"></video>
-              <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            </div>
-            <div class="card-info">
-              <span class="badge">${badge}</span>
-              <p class="vid-title">${title}</p>
-            </div>
-          </a>`;
+         // Videy: Support Preview
+         badge = "VIDEY";
+         thumbUrl = `https://cdn.videy.co/${id}.jpg`;
+         // Inject Video Tag (Muted & Loop Wajib untuk Autoplay Preview)
+         videoTag = `<video src="https://cdn.videy.co/${id}.mp4" muted loop playsinline preload="none" class="preview-vid"></video>`;
       }
+
+      html += `
+        <a href="?id=${id}" class="vid-card">
+          <div class="thumb-area" onmouseenter="startPreview(this)" onmouseleave="stopPreview(this)">
+            
+            <div class="thumb-bg" style="background-image: url('${thumbUrl}');"></div>
+            
+            ${videoTag}
+
+            <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>
+          <div class="card-info">
+            <span class="badge">${badge}</span>
+            <p class="vid-title">${title}</p>
+          </div>
+        </a>
+      `;
       found++;
     });
 
-    if(found){
+    if(found > 0) {
       target.innerHTML = html;
       statusMsg.style.display = 'none';
     } else {
       statusMsg.textContent = "Daftar video kosong.";
     }
   } catch (err) {
+    clearTimeout(timeout);
     statusMsg.innerHTML = "<b>ERROR:</b> " + err.message;
     statusMsg.style.color = "red";
   }
 }
 
-loadVideos();
+// PLAYER LOGIC
+function initPlayer() {
+  document.getElementById('dlBtn').onclick = function() { window.open(SMARTLINK, '_blank'); };
+  
+  if(dmId) {
+    frame.src = `https://www.dailymotion.com/embed/video/${dmId}?autoplay=1&mute=1`;
+    vid.style.display = 'none';
+  } else if(vidId) {
+    if(vidId.length > 9 || vidId.startsWith('k')) {
+       frame.src = `https://www.dailymotion.com/embed/video/${vidId}?autoplay=1&mute=1`;
+       vid.style.display = 'none';
+    } else {
+       const url = `https://cdn.videy.co/${vidId}.mp4`;
+       vid.src = url;
+       frame.style.display = 'none';
+       vid.load();
+       vid.muted = true; 
+       vid.play().catch(e => console.log("Autoplay blocked"));
+       vid.onloadedmetadata = function() {
+         if(this.videoHeight > this.videoWidth) { shell.classList.add('vertical'); }
+       };
+    }
+  }
+}
 </script>
 
 </body>
