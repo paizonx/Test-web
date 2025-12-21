@@ -1,84 +1,219 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Video Stream</title>
+<title>VidStream Pro</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-/* CSS SAMA SEPERTI SEBELUMNYA */
-:root{ --bg: #0f0f0f; --card-bg: #1e1e1e; --text: #f0f0f0; --muted: #aaaaaa; --accent: #3ea6ff; --line: #333; }
-*{box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
-body{margin:0;background:var(--bg);color:var(--text);padding-bottom: 40px;}
-a{text-decoration:none; color:inherit;}
-.container{max-width:1000px;margin:0 auto;padding:16px}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--line);}
-.logo{font-weight:800;font-size:20px;color:#fff;letter-spacing:-0.5px;}
+:root{
+  --bg-main: #060b14;      /* Latar belakang utama sangat gelap */
+  --bg-card: linear-gradient(145deg, #131b2e 0%, #0d1221 100%);
+  --accent: #2563eb;       /* Biru terang untuk tombol/icon */
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --badge-bg: #1e3a8a;
+  --badge-text: #93c5fd;
+}
 
-/* GALERI GRID */
-.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-.vid-card { background: var(--card-bg); border-radius: 8px; overflow: hidden; transition: transform 0.2s; cursor: pointer; border: 1px solid var(--line); display:flex; flex-direction:column; }
-.vid-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-.thumb-placeholder { width: 100%; aspect-ratio: 9/16; background: #2a2a2a; display: flex; align-items: center; justify-content: center; position: relative; }
-.thumb-placeholder svg { width:40px; height:40px; fill:var(--muted); opacity:0.5; }
-.vid-info { padding: 10px; }
-.vid-title { font-size: 13px; font-weight: 600; margin:0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
-.vid-tag { font-size: 11px; color: var(--muted); margin-top: 4px; }
+*{box-sizing:border-box;font-family:'Inter', system-ui, sans-serif}
+body{margin:0;background:var(--bg-main);color:var(--text-main);padding-bottom: 60px;}
+a{text-decoration:none; color:inherit; transition: 0.2s;}
 
-/* PLAYER STYLES */
-#playerPage { display: none; }
-.playerShell { position: relative; width: 100%; background: #000; border-radius: 12px; overflow: hidden; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9; max-height: 85vh; transition: aspect-ratio 0.3s ease; }
-.playerShell.vertical { aspect-ratio: 9/16; max-width: 450px; }
-video, iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; outline: none; }
-iframe { display: none; }
-.overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); transition: opacity 0.3s; z-index: 10; }
-.play-btn-big { width: 70px; height: 70px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s, background 0.2s; }
-.play-btn-big:hover { transform: scale(1.1); background: var(--accent); border-color:transparent;}
-.play-btn-big svg { width: 30px; height: 30px; fill: #fff; margin-left: 4px; }
-.controls-area { margin-top: 20px; text-align: center; }
-.btn-action { background: var(--accent); color: #fff; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer; margin: 5px; }
-.meta-row { margin-top: 20px; text-align: center; }
-.share-bar { display: flex; gap: 15px; justify-content: center; margin-top: 15px; flex-wrap: wrap;}
-.share-icon { color: var(--muted); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap:5px; background:none; border:none; padding:5px;}
-.share-icon:hover { color: #fff; }
-.back-btn { display: inline-block; margin-bottom: 15px; color: var(--accent); font-weight: 600; cursor: pointer;}
+/* CONTAINER & LAYOUT */
+.container{max-width:1100px;margin:0 auto;padding:0 20px;}
+
+/* NAVBAR */
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.brand { 
+  display: flex; align-items: center; gap: 10px; 
+  font-weight: 800; font-size: 20px; color: #fff;
+}
+.brand span { color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 20px; color: var(--text-muted); font-size: 14px; font-weight: 600;}
+.nav-right span:hover { color: #fff; cursor: pointer; }
+
+/* HERO SECTION */
+.hero { padding: 40px 0 30px 0; }
+.hero h1 { font-size: 36px; margin: 0 0 10px 0; font-weight: 800; letter-spacing: -0.02em; }
+.hero p { color: var(--text-muted); margin: 0; font-size: 15px; max-width: 500px; line-height: 1.5; }
+
+/* GRID HEADER */
+.section-header { 
+  display: flex; justify-content: space-between; align-items: flex-end; 
+  margin-bottom: 20px; margin-top: 10px;
+}
+.sec-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; }
+.sec-title svg { fill: var(--accent); width: 20px; height: 20px; }
+.update-badge { 
+  background: rgba(255,255,255,0.08); padding: 5px 10px; 
+  border-radius: 4px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* VIDEO GRID */
+.gallery-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+  gap: 20px; 
+}
+
+/* CARD DESIGN (Design Baru) */
+.vid-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex; flex-direction: column;
+}
+.vid-card:hover { 
+  transform: translateY(-4px); 
+  border-color: #3b82f6; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.thumb-area {
+  width: 100%;
+  aspect-ratio: 16/9; /* Landscape sesuai gambar */
+  background: #000;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Efek Thumbnail Gradient Overlay */
+.thumb-area::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+.play-icon-small {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+  transition: 0.2s;
+}
+.play-icon-small svg { fill: #fff; width: 14px; height: 14px; margin-left: 2px; }
+.vid-card:hover .play-icon-small { background: var(--accent); transform: scale(1.1); }
+
+.card-info { padding: 14px; position: relative; z-index: 2; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;}
+.badge-row { margin-bottom: 8px; }
+.src-badge {
+  display: inline-block;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-size: 10px; font-weight: 800;
+  padding: 3px 6px; border-radius: 3px;
+  text-transform: uppercase;
+}
+.vid-title {
+  font-size: 14px; font-weight: 600; 
+  color: #fff; line-height: 1.4; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* FOOTER */
+.footer { 
+  margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); 
+  text-align: center; color: var(--text-muted); font-size: 12px;
+}
+.footer-links { margin-top: 10px; display: flex; justify-content: center; gap: 15px; }
+
+/* PLAYER PAGE STYLES (Dipertahankan fungsinya) */
+#playerPage { display: none; margin-top: 20px;}
+.playerShell {
+  position: relative; width: 100%; background: #000; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6); border: 1px solid var(--border);
+  aspect-ratio: 16/9; max-height: 85vh;
+}
+.playerShell.vertical { aspect-ratio: 9/16; max-width: 450px; margin: 0 auto; }
+video, iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.overlay { 
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; 
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+}
+.btn-action { 
+  background: var(--accent); color: #fff; border: 0; padding: 12px 30px; 
+  border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 20px;
+}
+.back-btn { color: var(--text-muted); font-size: 14px; cursor: pointer; margin-bottom: 15px; display: inline-block;}
+.back-btn:hover { color: #fff; }
+
 </style>
 </head>
 <body>
 
 <div class="container">
   
-  <div id="galleryPage">
-    <div class="header">
-      <div class="logo">Drakor Gallery</div>
+  <div class="navbar">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#2563eb"><rect width="24" height="24" rx="6"/></svg>
+      VidStream<span>Pro</span>
     </div>
-    <p style="color:var(--muted); font-size:14px; margin-bottom:15px;" id="statusMsg">Memuat daftar video...</p>
-    <div class="gallery-grid" id="gridTarget"></div>
+    <div class="nav-right">
+      <span>Gallery</span>
+      <span onclick="alert('Share link website ini!')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </span>
+    </div>
+  </div>
+
+  <div id="galleryPage">
+    
+    <div class="hero">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span style="font-size:12px; font-weight:700; color:#fff; letter-spacing:1px;">HERO</span>
+      </div>
+      <h1>Trending Videos</h1>
+      <p>Discover the latest viral clips and daily motion streams. Uploaded fresh daily from various sources.</p>
+    </div>
+
+    <div class="section-header">
+      <div class="sec-title">
+        <svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zm0 9h7v7H4zm9-9h7v7h-7zm0 9h7v7h-7z"/></svg>
+        Latest Uploads
+      </div>
+      <div class="update-badge">Updated Today</div>
+    </div>
+
+    <p style="color:var(--text-muted); font-size:14px;" id="statusMsg">Loading content...</p>
+    
+    <div class="gallery-grid" id="gridTarget">
+      </div>
+
+    <div class="footer">
+      &copy; 2024 VidStream Pro. All rights reserved.<br>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">DMCA</a>
+      </div>
+    </div>
   </div>
 
   <div id="playerPage">
-    <div class="back-btn" onclick="goHome()">← Kembali ke Daftar</div>
+    <div class="back-btn" onclick="goHome()">← Back to Gallery</div>
     
     <div id="shell" class="playerShell">
       <video id="vid" playsinline preload="metadata"></video>
       <iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe>
 
       <div id="overlay" class="overlay">
-        <div class="play-btn-big" id="playTrigger">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <div style="width:80px; height:80px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; border:1px solid rgba(255,255,255,0.2);" id="playTrigger">
+           <svg viewBox="0 0 24 24" width="32" height="32" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
         </div>
-        <div class="controls-area">
-          <h2 id="vidTitle" style="margin:10px 0; font-size:16px;">Video Player</h2>
-          <button id="dlBtn" class="btn-action">Download / Watch</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="meta-row">
-      <div class="share-bar">
-        <button class="share-icon" id="cpLink">Salin Link</button>
-        <button class="share-icon" onclick="share('wa')">WhatsApp</button>
-        <button class="share-icon" onclick="share('fb')">Facebook</button>
+        <h2 id="vidTitle" style="margin-top:20px; font-size:18px;">Video Player</h2>
+        <button id="dlBtn" class="btn-action">Download / Watch</button>
       </div>
     </div>
     
@@ -90,10 +225,9 @@ iframe { display: none; }
 </div>
 
 <script>
-// KONFIGURASI LINK IKLAN
+// CONFIG
 const SMARTLINK = "https://harbourbreederdump.com/an29v43y4m?key=549781a632ef3b8389ad01c914a1ee3a";
 
-// ELEMENT REFERENSI
 const q = new URLSearchParams(location.search);
 const vidId = q.get('id') || q.get('v') || '';
 const dmId = q.get('dm');
@@ -106,62 +240,58 @@ const vid = document.getElementById('vid');
 const frame = document.getElementById('frame');
 const overlay = document.getElementById('overlay');
 
-// --- LOGIKA UTAMA ---
-
+// ROUTING
 if(vidId || dmId || rawSrc) {
-  // Jika URL ada parameter video, tampilkan PLAYER
   galleryPage.style.display = 'none';
   playerPage.style.display = 'block';
   initPlayer();
 } else {
-  // Jika URL kosong, tampilkan GALERI dari videos.txt
   loadVideosFromTxt();
 }
 
 function goHome(){ window.location.href = window.location.pathname; }
 
-// FUNGSI MEMBACA FILE TXT
+// LOAD FROM TXT
 async function loadVideosFromTxt() {
   const statusMsg = document.getElementById('statusMsg');
   const target = document.getElementById('gridTarget');
   
   try {
-    // Memanggil file videos.txt (Pastikan nama file sesuai & satu folder)
     const response = await fetch('videos.txt');
-    
-    if(!response.ok) {
-      statusMsg.textContent = "Gagal memuat daftar video (File videos.txt tidak ditemukan).";
-      return;
-    }
+    if(!response.ok) { statusMsg.textContent = "Failed to load list."; return; }
     
     const textData = await response.text();
-    const lines = textData.split('\n'); // Pisahkan per baris
-    
+    const lines = textData.split('\n');
     let html = '';
     let count = 0;
 
     lines.forEach(line => {
-      // Lewati baris kosong
       if(!line.trim()) return;
-
-      // Pisahkan ID dan Judul berdasarkan tanda |
       const parts = line.split('|');
       const id = parts[0].trim();
-      const title = parts[1] ? parts[1].trim() : 'Video Tanpa Judul';
+      const title = parts[1] ? parts[1].trim() : 'Untitled Video';
       
-      // Jika ID valid, buat HTML card
       if(id) {
         count++;
-        // Cek apakah itu ID Dailymotion (biasanya panjang/huruf) atau Videy (biasanya pendek)
-        // Kita defaultkan ke link ID biasa, nanti player yang deteksi
+        // Logika sederhana menentukan Badge
+        let badgeType = "VIDEY";
+        if(id.length > 8 || isNaN(id.charAt(0)) && id.length > 7) { 
+            // Jika ID panjang atau format beda, asumsikan DM/Vimeo
+            if(id.length > 8) badgeType = "DM"; 
+        }
+
         html += `
         <a href="?id=${id}" class="vid-card">
-          <div class="thumb-placeholder">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <div class="thumb-area">
+            <div class="play-icon-small">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
           </div>
-          <div class="vid-info">
+          <div class="card-info">
+            <div class="badge-row">
+              <span class="src-badge">${badgeType}</span>
+            </div>
             <p class="vid-title">${title}</p>
-            <div class="vid-tag">ID: ${id}</div>
           </div>
         </a>
         `;
@@ -170,88 +300,57 @@ async function loadVideosFromTxt() {
 
     if(count > 0){
       target.innerHTML = html;
-      statusMsg.textContent = `${count} Video Terbaru`;
+      statusMsg.style.display = 'none';
     } else {
-      statusMsg.textContent = "Daftar video kosong.";
+      statusMsg.textContent = "No videos found.";
     }
-
   } catch (error) {
     console.error(error);
-    statusMsg.textContent = "Terjadi kesalahan saat memuat data.";
   }
 }
 
-// FUNGSI PLAYER (Sama seperti sebelumnya dengan perbaikan)
+// PLAYER LOGIC (Sama seperti sebelumnya)
 function initPlayer(){
   let srcUrl = '';
-
   document.getElementById('dlBtn').onclick = () => { if(SMARTLINK) window.open(SMARTLINK, '_blank'); };
 
-  // Dailymotion logic
   if(dmId){
-    shell.style.aspectRatio = '16/9';
-    frame.src = `https://www.dailymotion.com/embed/video/${dmId}?autoplay=1&mute=1`;
-    frame.style.display = 'block';
-    vid.style.display = 'none';
-    overlay.style.display = 'none';
+    setupIframe(`https://www.dailymotion.com/embed/video/${dmId}?autoplay=1&mute=1`, '16/9');
     return;
   }
 
-  // Videy logic
   if(vidId){
-    // Deteksi jika user memasukkan ID dailymotion ke parameter ?id=
-    // Videy ID biasanya pendek (6-7 chars), Dailymotion panjang
     if(vidId.length > 10 || vidId.startsWith('k')) {
-       // Asumsikan dailymotion jika panjang
-       frame.src = `https://www.dailymotion.com/embed/video/${vidId}?autoplay=1&mute=1`;
-       frame.style.display = 'block';
-       vid.style.display = 'none';
-       overlay.style.display = 'none';
+       setupIframe(`https://www.dailymotion.com/embed/video/${vidId}?autoplay=1&mute=1`, '16/9');
        return;
     }
-
-    const sources = [
-      `https://cdn.videy.co/${vidId}.mp4`,
-      `https://cdn-videys.com/${vidId}.mp4`
-    ];
-    srcUrl = sources[0];
-    document.getElementById('vidTitle').textContent = `ID: ${vidId}`;
-  } 
-  else if(rawSrc){ srcUrl = rawSrc; }
+    srcUrl = `https://cdn.videy.co/${vidId}.mp4`;
+    document.getElementById('vidTitle').textContent = `Now Playing`;
+  } else if(rawSrc){ srcUrl = rawSrc; }
 
   if(srcUrl){
     vid.src = srcUrl;
     vid.load();
-    
-    // Auto Aspect Ratio & Autoplay Muted
     vid.onloadedmetadata = function() {
-      const w = this.videoWidth;
-      const h = this.videoHeight;
-      if(w && h){
-        if(h > w){ shell.classList.add('vertical'); shell.style.aspectRatio = `${w}/${h}`; } 
-        else { shell.classList.remove('vertical'); shell.style.aspectRatio = `${w}/${h}`; }
-      }
+      const w = this.videoWidth; const h = this.videoHeight;
+      if(w && h) shell.style.aspectRatio = (h > w) ? `${w}/${h}` : `${w}/${h}`;
+      if(h > w) shell.classList.add('vertical');
     };
     vid.muted = true;
     vid.play().catch(()=>{});
   }
 }
 
+function setupIframe(url, ratio){
+  shell.style.aspectRatio = ratio;
+  frame.src = url;
+  frame.style.display = 'block';
+  vid.style.display = 'none';
+  overlay.style.display = 'none';
+}
+
 document.getElementById('playTrigger').onclick = () => {
   if(SMARTLINK) window.open(SMARTLINK, '_blank');
   overlay.style.opacity = '0';
   setTimeout(()=> overlay.style.display='none', 300);
-  if(vid.style.display !== 'none'){ vid.muted = false; vid.play(); }
-};
-
-document.getElementById('cpLink').onclick = async () => { try { await navigator.clipboard.writeText(location.href); alert('Link disalin!'); } catch(e){} };
-function share(platform){
-  const url = encodeURIComponent(location.href);
-  let link = '';
-  if(platform==='wa') link = `https://wa.me/?text=${url}`;
-  if(platform==='fb') link = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-  if(link) window.open(link, '_blank');
-}
-</script>
-</body>
-</html>
+  if(vid.style.
