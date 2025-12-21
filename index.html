@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 
-<meta property="og:title" content="VidStream Pro - Trending Viral Videos">
-<meta property="og:description" content="Tonton koleksi video viral terbaru hari ini. Streaming cepat dan HD.">
+<meta property="og:title" content="VidStream Pro">
+<meta property="og:description" content="Nonton video viral terbaru.">
 <meta property="og:image" content="https://cdn.videy.co/DEFAULT_THUMB.jpg"> 
-<meta property="og:url" content="https://test-web-7km.pages.dev/">
 <meta property="og:type" content="website">
 
 <title>VidStream Pro</title>
@@ -26,42 +25,53 @@
 body { margin: 0; background-color: var(--bg-main); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
 a { text-decoration: none; color: inherit; }
 
-/* Layout & Navbar */
+/* Layout */
 .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
 .brand { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
 .brand span { color: var(--accent); }
 
-/* Hero Section */
+/* Hero */
 .hero { padding: 30px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
 .hero h1 { font-size: 28px; font-weight: 800; margin: 0 0 10px 0; }
 .hero p { color: var(--text-muted); margin: 0; font-size: 14px; }
 
-/* Grid Video */
+/* Grid */
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding-bottom: 50px; }
 
-/* Kartu Video */
-.vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; cursor: pointer; }
+/* Card */
+.vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; cursor: pointer; position: relative; }
 .vid-card:hover { transform: translateY(-5px); border-color: var(--accent); }
 
-/* THUMBNAIL AREA (Settingan Gambar) */
+/* THUMBNAIL AREA */
 .thumb-area { 
   width: 100%; aspect-ratio: 16/9; 
-  background-color: #222; /* Warna dasar abu-abu (bukan hitam pekat) jika gambar loading */
-  background-position: center; 
-  background-size: cover; /* Agar gambar full kotak */
-  background-repeat: no-repeat;
+  background-color: #000; 
   position: relative; 
+  overflow: hidden;
   display: flex; align-items: center; justify-content: center; 
 }
 
-/* Overlay tipis biar icon play kelihatan jelas */
-.thumb-area::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.2); }
+/* 1. LAYER GAMBAR (Untuk Dailymotion) */
+.thumb-bg {
+  position: absolute; inset: 0;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  z-index: 1;
+}
 
-/* Icon Play Static */
-.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 2; border: 1px solid rgba(255,255,255,0.3); }
+/* 2. LAYER VIDEO (Untuk Videy) */
+.thumb-vid {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; /* Video full kotak */
+  z-index: 2;
+}
 
-.card-info { padding: 12px; position: relative; z-index: 3; background: var(--bg-card); }
+/* Overlay & Icon */
+.overlay-shadow { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.2); z-index: 5; pointer-events: none;}
+.play-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 10; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
+
+.card-info { padding: 12px; position: relative; z-index: 20; background: var(--bg-card); }
 .vid-title { font-size: 13px; font-weight: 600; margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .badge { font-size: 10px; background: #1e3a8a; color: #93c5fd; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; font-weight: bold; }
 
@@ -72,9 +82,8 @@ a { text-decoration: none; color: inherit; }
 video, iframe { width: 100%; height: 100%; position: absolute; inset: 0; border: 0; }
 .back-btn { cursor: pointer; color: var(--accent); margin-bottom: 15px; display: inline-block; font-weight: 600; }
 
-/* Ad Containers */
+/* Ads */
 .ad-native-wrapper { margin: 30px 0; border: 1px dashed #333; padding: 10px; border-radius: 8px; text-align: center; min-height: 100px; display:flex; align-items:center; justify-content:center; background: #0a0f1c;}
-
 .footer { margin-top: 50px; padding: 20px; border-top: 1px solid var(--border); text-align: center; color: #555; font-size: 12px; }
 </style>
 </head>
@@ -137,7 +146,7 @@ const q = new URLSearchParams(location.search);
 const vidId = q.get('id');
 const dmId = q.get('dm');
 
-// Global Error Handler
+// Error Handler
 window.onerror = function(message, source, lineno, colno, error) {
     const statusMsg = document.getElementById('statusMsg');
     if(statusMsg && statusMsg.style.display !== 'none') {
@@ -146,7 +155,6 @@ window.onerror = function(message, source, lineno, colno, error) {
     }
 };
 
-// Referensi
 const statusMsg = document.getElementById('statusMsg');
 const galleryPage = document.getElementById('galleryPage');
 const playerPage = document.getElementById('playerPage');
@@ -154,7 +162,6 @@ const shell = document.getElementById('shell');
 const vid = document.getElementById('vid');
 const frame = document.getElementById('frame');
 
-// ROUTING
 if(vidId || dmId) {
   galleryPage.style.display = 'none';
   playerPage.style.display = 'block';
@@ -164,7 +171,6 @@ if(vidId || dmId) {
   loadVideos();   
 }
 
-// ADS INJECTION
 function injectAds() {
     try {
         const popScript = document.createElement('script');
@@ -188,7 +194,6 @@ function injectAds() {
     } catch(e) { console.log("Adblocker detected"); }
 }
 
-// LOAD VIDEOS (SIMPLE MODE: IMAGE ONLY)
 async function loadVideos() {
   const target = document.getElementById('gridTarget');
   
@@ -217,21 +222,27 @@ async function loadVideos() {
       const id = parts[0].trim();
       const title = parts[1] ? parts[1].trim() : 'Video Tanpa Judul';
       
-      let badge = "VIDEY";
-      let thumbUrl = ""; 
+      let badge = "";
+      let thumbHTML = ""; // Ini yang akan diisi (Gambar atau Video)
 
       if(id.length > 9 || id.startsWith('k')) {
+         // --- KASUS DAILYMOTION ---
+         // Pake Gambar Thumbnail Saja
          badge = "DM";
-         thumbUrl = `https://www.dailymotion.com/thumbnail/video/${id}`;
+         thumbHTML = `<div class="thumb-bg" style="background-image: url('https://www.dailymotion.com/thumbnail/video/${id}');"></div>`;
       } else {
+         // --- KASUS VIDEY ---
+         // Pake Video Player (Muted & Preload Metadata) agar muncul gambar frame pertama
          badge = "VIDEY";
-         // Mengambil gambar langsung dari videy
-         thumbUrl = `https://cdn.videy.co/${id}.jpg`;
+         // preload="metadata" #t=0.1 memaksa browser ambil frame awal tanpa download full
+         thumbHTML = `<video src="https://cdn.videy.co/${id}.mp4#t=0.1" preload="metadata" muted playsinline class="thumb-vid"></video>`;
       }
 
       html += `
         <a href="?id=${id}" class="vid-card">
-          <div class="thumb-area" style="background-image: url('${thumbUrl}');">
+          <div class="thumb-area">
+            ${thumbHTML}
+            <div class="overlay-shadow"></div>
             <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
           <div class="card-info">
@@ -256,7 +267,6 @@ async function loadVideos() {
   }
 }
 
-// PLAYER LOGIC
 function initPlayer() {
   document.getElementById('dlBtn').onclick = function() { window.open(SMARTLINK, '_blank'); };
   
