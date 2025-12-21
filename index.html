@@ -1,118 +1,203 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VidStream Pro</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="referrer" content="no-referrer">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{
+/* --- BAGIAN STYLE CSS --- */
+:root {
   --bg-main: #060b14;
-  --bg-card: linear-gradient(145deg, #131b2e 0%, #0d1221 100%);
+  --bg-card: #131b2e;
   --accent: #2563eb;
   --text-main: #ffffff;
   --text-muted: #94a3b8;
   --border: #1e293b;
-  --badge-bg: #1e3a8a;
-  --badge-text: #93c5fd;
 }
+body { margin: 0; background-color: var(--bg-main); color: var(--text-main); font-family: 'Inter', sans-serif; }
+a { text-decoration: none; color: inherit; }
 
-*{box-sizing:border-box;font-family:'Inter', system-ui, sans-serif}
-body{margin:0;background:var(--bg-main);color:var(--text-main);padding-bottom: 60px;}
-a{text-decoration:none; color:inherit; transition: 0.2s;}
+/* Layout */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-/* CONTAINER & LAYOUT */
-.container{max-width:1100px;margin:0 auto;padding:0 20px;}
-
-/* NAVBAR */
-.navbar {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.brand { 
-  display: flex; align-items: center; gap: 10px; 
-  font-weight: 800; font-size: 20px; color: #fff;
-}
+/* Navbar */
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.brand { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
 .brand span { color: var(--accent); }
-.nav-right { display: flex; align-items: center; gap: 20px; color: var(--text-muted); font-size: 14px; font-weight: 600;}
-.nav-right span:hover { color: #fff; cursor: pointer; }
 
-/* HERO SECTION */
-.hero { padding: 40px 0 30px 0; }
-.hero h1 { font-size: 36px; margin: 0 0 10px 0; font-weight: 800; letter-spacing: -0.02em; }
-.hero p { color: var(--text-muted); margin: 0; font-size: 15px; max-width: 500px; line-height: 1.5; }
+/* Hero */
+.hero { padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.hero h1 { font-size: 32px; font-weight: 800; margin: 0 0 10px 0; }
+.hero p { color: var(--text-muted); margin: 0; }
 
-/* GRID HEADER */
-.section-header { 
-  display: flex; justify-content: space-between; align-items: flex-end; 
-  margin-bottom: 20px; margin-top: 10px;
-}
-.sec-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; }
-.sec-title svg { fill: var(--accent); width: 20px; height: 20px; }
-.update-badge { 
-  background: rgba(255,255,255,0.08); padding: 5px 10px; 
-  border-radius: 4px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+/* Grid Video */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; padding-bottom: 50px; }
+
+/* Kartu Video */
+.vid-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; }
+.vid-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+.thumb-area { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+.play-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+.play-icon svg { width: 14px; height: 14px; fill: white; margin-left: 2px; }
+.card-info { padding: 15px; }
+.vid-title { font-size: 14px; font-weight: 600; margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.badge { font-size: 10px; background: #1e3a8a; color: #93c5fd; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 8px; font-weight: bold; }
+
+/* Player Page */
+#playerPage { display: none; margin-top: 20px; }
+.playerShell { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+.playerShell.vertical { aspect-ratio: 9/16; max-width: 400px; margin: 0 auto; }
+video, iframe { width: 100%; height: 100%; position: absolute; inset: 0; border: 0; }
+.back-btn { cursor: pointer; color: var(--accent); margin-bottom: 15px; display: inline-block; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="navbar">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#2563eb"><rect width="24" height="24" rx="6"/></svg>
+      VidStream<span>Pro</span>
+    </div>
+    <div style="font-size:14px; color:#aaa;">Gallery</div>
+  </div>
+
+  <div id="galleryPage">
+    <div class="hero">
+      <h1>Trending Videos</h1>
+      <p>Koleksi video terbaru update harian.</p>
+    </div>
+
+    <div id="statusMsg" style="padding: 20px; text-align: center; color: #aaa; border: 1px dashed #333; margin-bottom: 20px;">
+      Sedang memuat daftar video...
+    </div>
+    
+    <div class="gallery-grid" id="gridTarget">
+      </div>
+  </div>
+
+  <div id="playerPage">
+    <div class="back-btn" onclick="window.location.href=window.location.pathname">← Kembali</div>
+    <div id="shell" class="playerShell">
+      <video id="vid" controls playsinline></video>
+      <iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+    <h2 id="vidTitle" style="margin-top:15px; font-size:18px;">Now Playing</h2>
+    <button id="dlBtn" style="background:var(--accent); color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:10px; cursor:pointer; font-weight:bold; width:100%;">Download / Watch</button>
+  </div>
+
+</div>
+
+<script>
+/* --- BAGIAN JAVASCRIPT --- */
+const SMARTLINK = "https://harbourbreederdump.com/an29v43y4m?key=549781a632ef3b8389ad01c914a1ee3a";
+const q = new URLSearchParams(location.search);
+const vidId = q.get('id');
+const dmId = q.get('dm');
+
+// Element Referensi
+const galleryPage = document.getElementById('galleryPage');
+const playerPage = document.getElementById('playerPage');
+const shell = document.getElementById('shell');
+const vid = document.getElementById('vid');
+const frame = document.getElementById('frame');
+
+// 1. LOGIKA ROUTING
+if(vidId || dmId) {
+  // Mode Player
+  galleryPage.style.display = 'none';
+  playerPage.style.display = 'block';
+  initPlayer();
+} else {
+  // Mode Galeri
+  loadVideos();
 }
 
-/* VIDEO GRID */
-.gallery-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-  gap: 20px; 
+// 2. FUNGSI LOAD VIDEO (TXT)
+async function loadVideos() {
+  const statusMsg = document.getElementById('statusMsg');
+  const target = document.getElementById('gridTarget');
+  
+  try {
+    // Pakai Timestamp agar tidak dicache browser
+    const res = await fetch('videos.txt?t=' + Date.now());
+    if(!res.ok) throw new Error("File videos.txt tidak ditemukan (404)");
+    
+    const text = await res.text();
+    const lines = text.split('\n');
+    let html = '';
+    let found = false;
+
+    lines.forEach(line => {
+      if(line.trim().length < 3) return;
+      const parts = line.split('|');
+      const id = parts[0].trim();
+      const title = parts[1] ? parts[1].trim() : 'Video Tanpa Judul';
+      
+      let badge = "VIDEY";
+      if(id.length > 8) badge = "DM"; // Deteksi simpel
+
+      html += `
+        <a href="?id=${id}" class="vid-card">
+          <div class="thumb-area">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+          <div class="card-info">
+            <span class="badge">${badge}</span>
+            <p class="vid-title">${title}</p>
+          </div>
+        </a>
+      `;
+      found = true;
+    });
+
+    if(found) {
+      target.innerHTML = html;
+      statusMsg.style.display = 'none'; // Sembunyikan pesan loading
+    } else {
+      statusMsg.textContent = "Daftar video kosong.";
+    }
+
+  } catch (err) {
+    statusMsg.innerHTML = "Gagal memuat: " + err.message + "<br><br>Pastikan file videos.txt ada di GitHub.";
+    statusMsg.style.color = "red";
+    statusMsg.style.borderColor = "red";
+  }
 }
 
-/* CARD DESIGN */
-.vid-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  position: relative;
-  display: flex; flex-direction: column;
+// 3. FUNGSI PLAYER
+function initPlayer() {
+  document.getElementById('dlBtn').onclick = function() { window.open(SMARTLINK, '_blank'); };
+  
+  if(dmId) {
+    frame.src = `https://www.dailymotion.com/embed/video/${dmId}?autoplay=1&mute=1`;
+    vid.style.display = 'none';
+  } else if(vidId) {
+    // Cek ID panjang = DM, pendek = Videy
+    if(vidId.length > 9) {
+       frame.src = `https://www.dailymotion.com/embed/video/${vidId}?autoplay=1&mute=1`;
+       vid.style.display = 'none';
+    } else {
+       const url = `https://cdn.videy.co/${vidId}.mp4`;
+       vid.src = url;
+       frame.style.display = 'none';
+       vid.load();
+       vid.play().catch(e => console.log("Autoplay blocked"));
+       
+       // Deteksi Vertical/Horizontal
+       vid.onloadedmetadata = function() {
+         if(this.videoHeight > this.videoWidth) {
+           shell.classList.add('vertical');
+         }
+       };
+    }
+  }
 }
-.vid-card:hover { 
-  transform: translateY(-4px); 
-  border-color: #3b82f6; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
+</script>
 
-.thumb-area {
-  width: 100%;
-  aspect-ratio: 16/9;
-  background: #000;
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-}
-.thumb-area::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-}
-
-.play-icon-small {
-  width: 40px; height: 40px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(4px);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 2;
-  transition: 0.2s;
-}
-.play-icon-small svg { fill: #fff; width: 14px; height: 14px; margin-left: 2px; }
-.vid-card:hover .play-icon-small { background: var(--accent); transform: scale(1.1); }
-
-.card-info { padding: 14px; position: relative; z-index: 2; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;}
-.badge-row { margin-bottom: 8px; }
-.src-badge {
-  display: inline-block;
-  background: var(--badge-bg);
-  color: var(--badge-text);
-  font-size: 10px; font-weight: 800;
-  padding: 3px 6px; border-radius: 3px;
-  text-transform: uppercase;
-}
-.vid-title {
-  font-size: 14px; font-weight: 600; 
-  color: #fff; line-height: 1.4; margin: 0;
-  display: -webkit-box;
+</body>
+</html>
