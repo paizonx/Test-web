@@ -78,14 +78,15 @@ a{text-decoration:none;color:inherit}
   z-index:2
 }
 
-/* VIDEO PREVIEW */
+/* VIDEO FRAME (DIAM) */
 .thumb-video{
   position:absolute;
   inset:0;
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:1
+  z-index:1;
+  pointer-events:none;
 }
 
 .play-icon{
@@ -219,7 +220,6 @@ async function loadVideos(){
     if(count){
       grid.innerHTML=html;
       status.style.display='none';
-      initGridPreview();
     }else{
       status.textContent='No videos';
     }
@@ -227,33 +227,6 @@ async function loadVideos(){
   }catch(e){
     status.textContent='ERROR loading videos';
   }
-}
-
-/* === PREVIEW VIDEO 2 DETIK SAJA === */
-function initGridPreview(){
-  const vids=document.querySelectorAll('.thumb-video');
-
-  const io=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      const v=e.target;
-      if(e.isIntersecting){
-        v.currentTime=0;
-        v.play().catch(()=>{});
-
-        if(v._timer) clearTimeout(v._timer);
-        v._timer=setTimeout(()=>{
-          v.pause();
-          v.currentTime=0;
-        },2000); // 2 DETIK
-      }else{
-        v.pause();
-        v.currentTime=0;
-        if(v._timer) clearTimeout(v._timer);
-      }
-    });
-  },{threshold:0.4});
-
-  vids.forEach(v=>io.observe(v));
 }
 
 loadVideos();
