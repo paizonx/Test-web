@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Video Stream</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<style>
+/* CSS SAMA SEPERTI SEBELUMNYA */
+:root{ --bg: #0f0f0f; --card-bg: #1e1e1e; --text: #f0f0f0; --muted: #aaaaaa; --accent: #3ea6ff; --line: #333; }
+*{box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);padding-bottom: 40px;}
+a{text-decoration:none; color:inherit;}
+.container{max-width:1000px;margin:0 auto;padding:16px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.logo{font-weight:800;font-size:20px;color:#fff;letter-spacing:-0.5px;}
+
+/* GALERI GRID */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.vid-card { background: var(--card-bg); border-radius: 8px; overflow: hidden; transition: transform 0.2s; cursor: pointer; border: 1px solid var(--line); display:flex; flex-direction:column; }
+.vid-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.thumb-placeholder { width: 100%; aspect-ratio: 9/16; background: #2a2a2a; display: flex; align-items: center; justify-content: center; position: relative; }
+.thumb-placeholder svg { width:40px; height:40px; fill:var(--muted); opacity:0.5; }
+.vid-info { padding: 10px; }
+.vid-title { font-size: 13px; font-weight: 600; margin:0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+.vid-tag { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* PLAYER STYLES */
+#playerPage { display: none; }
+.playerShell { position: relative; width: 100%; background: #000; border-radius: 12px; overflow: hidden; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9; max-height: 85vh; transition: aspect-ratio 0.3s ease; }
+.playerShell.vertical { aspect-ratio: 9/16; max-width: 450px; }
+video, iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; outline: none; }
+iframe { display: none; }
+.overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); transition: opacity 0.3s; z-index: 10; }
+.play-btn-big { width: 70px; height: 70px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s, background 0.2s; }
+.play-btn-big:hover { transform: scale(1.1); background: var(--accent); border-color:transparent;}
+.play-btn-big svg { width: 30px; height: 30px; fill: #fff; margin-left: 4px; }
+.controls-area { margin-top: 20px; text-align: center; }
+.btn-action { background: var(--accent); color: #fff; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer; margin: 5px; }
+.meta-row { margin-top: 20px; text-align: center; }
+.share-bar { display: flex; gap: 15px; justify-content: center; margin-top: 15px; flex-wrap: wrap;}
+.share-icon { color: var(--muted); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap:5px; background:none; border:none; padding:5px;}
+.share-icon:hover { color: #fff; }
+.back-btn { display: inline-block; margin-bottom: 15px; color: var(--accent); font-weight: 600; cursor: pointer;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div id="galleryPage">
+    <div class="header">
+      <div class="logo">Drakor Gallery</div>
+    </div>
+    <p style="color:var(--muted); font-size:14px; margin-bottom:15px;" id="statusMsg">Memuat daftar video...</p>
+    <div class="gallery-grid" id="gridTarget"></div>
+  </div>
+
+  <div id="playerPage">
+    <div class="back-btn" onclick="goHome()">← Kembali ke Daftar</div>
+    
+    <div id="shell" class="playerShell">
+      <video id="vid" playsinline preload="metadata"></video>
+      <iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+      <div id="overlay" class="overlay">
+        <div class="play-btn-big" id="playTrigger">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="controls-area">
+          <h2 id="vidTitle" style="margin:10px 0; font-size:16px;">Video Player</h2>
+          <button id="dlBtn" class="btn-action">Download / Watch</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta-row">
+      <div class="share-bar">
+        <button class="share-icon" id="cpLink">Salin Link</button>
+        <button class="share-icon" onclick="share('wa')">WhatsApp</button>
+        <button class="share-icon" onclick="share('fb')">Facebook</button>
+      </div>
+    </div>
+    
+    <div style="margin-top:30px; border:1px dashed #333; padding:20px; text-align:center; color:#555; border-radius:8px;">
+      Space Iklan
+      <div id="nativeSlot"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// KONFIGURASI LINK IKLAN
+const SMARTLINK = "https://harbourbreederdump.com/an29v43y4m?key=549781a632ef3b8389ad01c914a1ee3a";
+
+// ELEMENT REFERENSI
+const q = new URLSearchParams(location.search);
+const vidId = q.get('id') || q.get('v') || '';
+const dmId = q.get('dm');
+const rawSrc = q.get('src');
+
+const galleryPage = document.getElementById('galleryPage');
+const playerPage = document.getElementById('playerPage');
+const shell = document.getElementById('shell');
+const vid = document.getElementById('vid');
+const frame = document.getElementById('frame');
+const overlay = document.getElementById('overlay');
+
+// --- LOGIKA UTAMA ---
+
+if(vidId || dmId || rawSrc) {
+  // Jika URL ada parameter video, tampilkan PLAYER
+  galleryPage.style.display = 'none';
+  playerPage.style.display = 'block';
+  initPlayer();
+} else {
+  // Jika URL kosong, tampilkan GALERI dari videos.txt
+  loadVideosFromTxt();
+}
+
+function goHome(){ window.location.href = window.location.pathname; }
+
+// FUNGSI MEMBACA FILE TXT
+async function loadVideosFromTxt() {
+  const statusMsg = document.getElementById('statusMsg');
+  const target = document.getElementById('gridTarget');
+  
+  try {
+    // Memanggil file videos.txt (Pastikan nama file sesuai & satu folder)
+    const response = await fetch('videos.txt');
+    
+    if(!response.ok) {
+      statusMsg.textContent = "Gagal memuat daftar video (File videos.txt tidak ditemukan).";
+      return;
+    }
+    
+    const textData = await response.text();
+    const lines = textData.split('\n'); // Pisahkan per baris
+    
+    let html = '';
+    let count = 0;
+
+    lines.forEach(line => {
+      // Lewati baris kosong
+      if(!line.trim()) return;
+
+      // Pisahkan ID dan Judul berdasarkan tanda |
+      const parts = line.split('|');
+      const id = parts[0].trim();
+      const title = parts[1] ? parts[1].trim() : 'Video Tanpa Judul';
+      
+      // Jika ID valid, buat HTML card
+      if(id) {
+        count++;
+        // Cek apakah itu ID Dailymotion (biasanya panjang/huruf) atau Videy (biasanya pendek)
+        // Kita defaultkan ke link ID biasa, nanti player yang deteksi
+        html += `
+        <a href="?id=${id}" class="vid-card">
+          <div class="thumb-placeholder">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <div class="vid-info">
+            <p class="vid-title">${title}</p>
+            <div class="vid-tag">ID: ${id}</div>
+          </div>
+        </a>
+        `;
+      }
+    });
+
+    if(count > 0){
+      target.innerHTML = html;
+      statusMsg.textContent = `${count} Video Terbaru`;
+    } else {
+      statusMsg.textContent = "Daftar video kosong.";
+    }
+
+  } catch (error) {
+    console.error(error);
+    statusMsg.textContent = "Terjadi kesalahan saat memuat data.";
+  }
+}
+
+// FUNGSI PLAYER (Sama seperti sebelumnya dengan perbaikan)
+function initPlayer(){
+  let srcUrl = '';
+
+  document.getElementById('dlBtn').onclick = () => { if(SMARTLINK) window.open(SMARTLINK, '_blank'); };
+
+  // Dailymotion logic
+  if(dmId){
+    shell.style.aspectRatio = '16/9';
+    frame.src = `https://www.dailymotion.com/embed/video/${dmId}?autoplay=1&mute=1`;
+    frame.style.display = 'block';
+    vid.style.display = 'none';
+    overlay.style.display = 'none';
+    return;
+  }
+
+  // Videy logic
+  if(vidId){
+    // Deteksi jika user memasukkan ID dailymotion ke parameter ?id=
+    // Videy ID biasanya pendek (6-7 chars), Dailymotion panjang
+    if(vidId.length > 10 || vidId.startsWith('k')) {
+       // Asumsikan dailymotion jika panjang
+       frame.src = `https://www.dailymotion.com/embed/video/${vidId}?autoplay=1&mute=1`;
+       frame.style.display = 'block';
+       vid.style.display = 'none';
+       overlay.style.display = 'none';
+       return;
+    }
+
+    const sources = [
+      `https://cdn.videy.co/${vidId}.mp4`,
+      `https://cdn-videys.com/${vidId}.mp4`
+    ];
+    srcUrl = sources[0];
+    document.getElementById('vidTitle').textContent = `ID: ${vidId}`;
+  } 
+  else if(rawSrc){ srcUrl = rawSrc; }
+
+  if(srcUrl){
+    vid.src = srcUrl;
+    vid.load();
+    
+    // Auto Aspect Ratio & Autoplay Muted
+    vid.onloadedmetadata = function() {
+      const w = this.videoWidth;
+      const h = this.videoHeight;
+      if(w && h){
+        if(h > w){ shell.classList.add('vertical'); shell.style.aspectRatio = `${w}/${h}`; } 
+        else { shell.classList.remove('vertical'); shell.style.aspectRatio = `${w}/${h}`; }
+      }
+    };
+    vid.muted = true;
+    vid.play().catch(()=>{});
+  }
+}
+
+document.getElementById('playTrigger').onclick = () => {
+  if(SMARTLINK) window.open(SMARTLINK, '_blank');
+  overlay.style.opacity = '0';
+  setTimeout(()=> overlay.style.display='none', 300);
+  if(vid.style.display !== 'none'){ vid.muted = false; vid.play(); }
+};
+
+document.getElementById('cpLink').onclick = async () => { try { await navigator.clipboard.writeText(location.href); alert('Link disalin!'); } catch(e){} };
+function share(platform){
+  const url = encodeURIComponent(location.href);
+  let link = '';
+  if(platform==='wa') link = `https://wa.me/?text=${url}`;
+  if(platform==='fb') link = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+  if(link) window.open(link, '_blank');
+}
+</script>
+</body>
+</html>
