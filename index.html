@@ -10,13 +10,10 @@
     <link rel="manifest" href="/manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <script type="text/javascript" src="https://harbourbreederdump.com/2e/a1/21/2ea12153a74996b501c2507cb4eebc96.js"></script>
+    <script type="text/javascript" src="https://thinnerwithdrewforbear.com/2e/a1/21/2ea12153a74996b501c2507cb4eebc96.js"></script>
 
     <script>
-        // Mencegah Klik Kanan
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        
-        // Mencegah Shortcut Developer (F12, Ctrl+U, Inspect)
+        document.addEventListener('contextmenu', event => event.preventDefault()); // Anti Klik Kanan
         document.onkeydown = function(e) {
             if (e.keyCode == 123) return false; // F12
             if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Inspect
@@ -32,18 +29,14 @@
         :root { --bg: #0f0f0f; --surface: #1e1e1e; --text: #fff; --red: #e50914; --gold: #ffd700; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* MENCEGAH SELECT TEXT (Supaya tidak bisa dicopy) */
+        /* MENCEGAH SELECT TEXT */
         body { 
             font-family: 'Roboto', sans-serif; 
             background-color: var(--bg); 
             color: var(--text); 
             overflow-x: hidden;
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* IE10+/Edge */
-            user-select: none; /* Standard */
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
-        
         a { text-decoration: none; color: inherit; transition: 0.2s; }
 
         /* NAVBAR (Glass Effect) */
@@ -51,14 +44,14 @@
             display: flex; align-items: center; justify-content: space-between; 
             padding: 0 20px; height: 65px; 
             background: rgba(15,15,15,0.85); 
-            backdrop-filter: blur(10px); /* Efek Blur Premium */
+            backdrop-filter: blur(10px);
             position: sticky; top: 0; z-index: 100; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
         }
         .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; letter-spacing: -0.5px; }
         .logo span { color: var(--red); font-size: 26px; }
         
-        /* TOMBOL INSTALL APP (Dibuat Menarik) */
+        /* TOMBOL INSTALL APP */
         .btn-vip { 
             background: linear-gradient(45deg, var(--red), #b20710); 
             padding: 10px 20px; border-radius: 30px; 
@@ -69,7 +62,6 @@
             animation: pulse-btn 2s infinite;
         }
         .btn-vip:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6); }
-        
         @keyframes pulse-btn {
             0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(229, 9, 20, 0); }
@@ -91,18 +83,15 @@
             background: #333; border: 1px solid #444; color: #fff; 
             padding: 0 24px; border-radius: 50px; cursor: pointer; font-weight: bold; 
         }
-        .search-btn:hover { background: #444; }
 
-        /* === PLAYER VIDEO === */
+        /* PLAYER VIDEO */
         #playerView { display: none; }
-        
         .player-box { position: relative; width: 100%; background: #000; margin: 0 auto; transition: aspect-ratio 0.3s ease; border-radius: 0 0 12px 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .mode-vertical { aspect-ratio: 9/16; max-height: 80vh; width: 100%; max-width: 450px; } 
         .mode-landscape { aspect-ratio: 16/9; max-width: 100%; }
-
         .player-box iframe, .player-box video { width: 100%; height: 100%; border: 0; display: block; position: absolute; top:0; left:0; object-fit: contain; }
 
-        /* OVERLAY FAKE PLAYER (Nyaman tapi Cuan) */
+        /* OVERLAY PLAYER */
         #overlayLayer { position: absolute; inset: 0; z-index: 20; background: #000; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         #overlayBackdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
         .play-btn-fake { 
@@ -115,11 +104,10 @@
         .play-btn-fake:hover { transform: scale(1.1); }
         .play-btn-fake::after { content: '▶'; font-size: 34px; color: white; margin-left: 5px; }
 
-        /* INFO & ADS */
+        /* ADS AREA */
         .info-area { padding: 20px 15px; }
         .main-title { font-size: 20px; font-weight: 700; line-height: 1.4; margin-bottom: 20px; color: #fff; }
         
-        /* Kotak Iklan Native yang Rapi */
         .native-ad { 
             background: #151515; border: 1px solid #252525; border-radius: 12px; 
             padding: 15px; margin: 25px 0; min-height: 250px; 
@@ -127,18 +115,16 @@
             width: 100%; overflow: hidden; 
         }
         
-        /* Tombol Download Video (Smartlink) */
         .dl-btn { 
             display: block; width: 100%; background: #fff; color: #000; 
             text-align: center; padding: 16px; border-radius: 12px; 
             font-weight: 800; font-size: 16px; cursor: pointer; border: none; 
             margin-bottom: 15px; text-transform: uppercase; 
-            box-shadow: 0 4px 15px rgba(255,255,255,0.1); 
-            transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1); transition: 0.2s;
         }
         .dl-btn:hover { background: #f0f0f0; transform: translateY(-2px); }
-        
-        /* GRID KONTEN */
+
+        /* GRID */
         #homeView { display: block; padding: 0 15px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; row-gap: 24px; }
         @media(min-width: 600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; } }
@@ -150,7 +136,6 @@
         .thumb.vert-mode { aspect-ratio: 9/16; }
         .thumb img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
         .card-t { font-size: 14px; font-weight: 500; margin-top: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #e0e0e0; }
-        
         .tag-source { position:absolute; top:8px; left:8px; padding:3px 8px; font-size:10px; font-weight:bold; border-radius:4px; color:white; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
         #loader { text-align: center; padding: 80px 20px; color: #888; }
@@ -171,7 +156,6 @@
     <div id="loader" style="display:none;"><h3>Loading Content...</h3></div>
 
     <div class="wrapper">
-
         <div id="homeView">
             <div class="search-container">
                 <input type="text" id="searchBox" class="search-input" placeholder="Cari Film, YouTube, Drama...">
@@ -205,8 +189,8 @@
                 <div class="native-ad">
                     <div style="width:100%; text-align:center;">
                         <span style="color:#555; font-size:10px; margin-bottom:8px; display:block; letter-spacing:1px;">SPONSORED ADVERTISEMENT</span>
-                        <script async="async" data-cfasync="false" src="https://harbourbreederdump.com/b94cafeb9a426597e421e6c2d836a415/invoke.js"></script>
-                        <div id="container-b94cafeb9a426597e421e6c2d836a415"></div>
+                        <script async="async" data-cfasync="false" src="https://thinnerwithdrewforbear.com/54f40a4ce292a9187e0b9a0feb507f92/invoke.js"></script>
+                        <div id="container-54f40a4ce292a9187e0b9a0feb507f92"></div>
                     </div>
                 </div>
 
@@ -222,7 +206,6 @@
                 <div id="sideList" style="display:flex; flex-direction:column; gap:15px;"></div>
             </div>
         </div>
-
     </div>
 
     <div class="footer">
@@ -235,8 +218,8 @@
     <script>
         const TMDB_KEY = "b9f961d942ecf6cb23575ffb5231ff13"; 
         const DB_FILE = "videos.txt";
-        // LINK IKLAN SMARTLINK ANDA
-        const AD_LINK = "https://harbourbreederdump.com/hwb3cmd6y?key=1c3f46a40e0e5deafd89c38ccc6afb86";
+        // 4. SMARTLINK BARU (thinnerwithdrewforbear)
+        const AD_LINK = "https://thinnerwithdrewforbear.com/hwb3cmd6y?key=1c3f46a40e0e5deafd89c38ccc6afb86";
 
         const homeView = document.getElementById('homeView');
         const playerView = document.getElementById('playerView');
@@ -251,25 +234,19 @@
         const urlParams = new URLSearchParams(window.location.search);
         const currentId = urlParams.get('id');
 
-        // === PWA INSTALL LOGIC ===
+        // === PWA LOGIC ===
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
         function installPWA() { 
-            if(deferredPrompt) { 
-                deferredPrompt.prompt(); deferredPrompt = null; 
-            } else { 
-                // Jika tidak bisa install, buka Smartlink (Cuan)
-                window.open(AD_LINK, '_blank'); 
-            } 
+            if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; } 
+            else { window.open(AD_LINK, '_blank'); } 
         }
 
-        // === ADS LOGIC ===
+        // === ADS & PLAY LOGIC ===
         function klikIklan() {
-            // Membuka Smartlink di Tab Baru
-            window.open(AD_LINK, '_blank'); 
+            window.open(AD_LINK, '_blank'); // Buka Smartlink
             overlayLayer.style.display = 'none';
             
-            // Play Video
             if(webVideo.style.display !== 'none') {
                 webVideo.play(); webVideo.controls = true;
             } else {
@@ -279,7 +256,7 @@
         }
         function bukaIklan() { window.open(AD_LINK, '_blank'); }
 
-        // === SEARCH FUNCTION ===
+        // === SEARCH LOGIC ===
         async function doDualSearch() {
             const query = searchBox.value;
             if(!query) return;
@@ -287,21 +264,16 @@
             gridTarget.innerHTML = '<div style="text-align:center; padding:40px; color:#888;">Searching...</div>';
             
             let combined = "";
-            
-            // 1. Cari di TMDB
             try { 
                 const r1 = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}`);
                 const d1 = await r1.json();
                 if(d1.results) d1.results.forEach(m => { if(m.poster_path) combined += createCard(`tmdb:${m.id}`, m.title, `https://image.tmdb.org/t/p/w500${m.poster_path}`, 'poster-mode', 'FILM', '#e62117'); });
             } catch(e){}
-            
-            // 2. Cari di Dailymotion
             try { 
                 const r2 = await fetch(`https://api.dailymotion.com/videos?search=${encodeURIComponent(query)}&fields=id,title,thumbnail_480_url&limit=10`);
                 const d2 = await r2.json();
                 if(d2.list) d2.list.forEach(v => { combined += createCard(v.id, v.title, v.thumbnail_480_url, 'video-mode', 'CLIP', '#2563eb'); });
             } catch(e){}
-            
             gridTarget.innerHTML = combined || '<div style="text-align:center; padding:20px;">No results found.</div>';
         }
 
@@ -310,7 +282,7 @@
         }
         searchBox.addEventListener("keypress", (e) => { if(e.key==="Enter") doDualSearch(); });
 
-        // === INITIALIZE ===
+        // === INIT ===
         async function init() {
             if(currentId) renderPlayer(currentId);
             else loadHome();
@@ -318,7 +290,7 @@
 
         async function loadHome() {
             let local = [];
-            // Load Local DB
+            // Load DB
             try {
                 const r = await fetch(DB_FILE + '?t=' + Date.now());
                 if(r.ok) {
@@ -330,41 +302,31 @@
                 }
             } catch(e){}
 
-            // Load Popular TMDB
+            // Load TMDB
             try {
                 const rT = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}`);
                 const dT = await rT.json();
                 let html = '';
                 
-                // Render Local
                 local.forEach(v => {
                     let thumb, mode='video-mode', tag='NEW', col='#00b894';
                     
                     if(v.id.includes('twimg') || v.id.endsWith('.mp4') || v.id.startsWith('videy:')) {
-                        thumb = 'https://via.placeholder.com/200x350/222/fff?text=VIDEO'; 
-                        mode='vert-mode'; tag='MP4'; col='#e17055';
+                        thumb = 'https://via.placeholder.com/200x350/222/fff?text=VIDEO'; mode='vert-mode'; tag='MP4'; col='#e17055';
                         if(v.id.startsWith('videy:')) thumb = `https://cdn.videy.co/${v.id.replace('videy:','')}.jpg`;
-                    
                     } else if(v.id.startsWith('yt:') || v.id.length === 11) {
                         let yid = v.id.startsWith('yt:') ? v.id.replace('yt:','') : v.id;
-                        thumb = `https://img.youtube.com/vi/${yid}/mqdefault.jpg`;
-                        mode='video-mode'; tag='YT'; col='#ff0000';
-
+                        thumb = `https://img.youtube.com/vi/${yid}/mqdefault.jpg`; mode='video-mode'; tag='YT'; col='#ff0000';
                     } else if(v.id.includes('dood') || v.id.includes('stream')) {
-                        thumb = 'https://via.placeholder.com/350x200/222/fff?text=STREAM'; 
-                        mode='video-mode'; tag='EMBED'; col='#6c5ce7';
-
+                        thumb = 'https://via.placeholder.com/350x200/222/fff?text=STREAM'; mode='video-mode'; tag='EMBED'; col='#6c5ce7';
                     } else if(v.id.startsWith('tmdb:') || /^\d{3,7}$/.test(v.id)) {
                         thumb = `https://via.placeholder.com/200x300?text=Movie`; mode='poster-mode'; tag='FILM'; col='#d63031';
-
                     } else {
-                        thumb = `https://www.dailymotion.com/thumbnail/video/${v.id}`;
-                        tag = 'DM';
+                        thumb = `https://www.dailymotion.com/thumbnail/video/${v.id}`; tag = 'DM';
                     }
                     html += createCard(v.id, v.title, thumb, mode, tag, col);
                 });
 
-                // Render TMDB
                 if(dT.results) dT.results.forEach(m => {
                     if(m.poster_path) html += createCard(`tmdb:${m.id}`, m.title, `https://image.tmdb.org/t/p/w500${m.poster_path}`, 'poster-mode', 'FILM', '#e62117');
                 });
@@ -380,8 +342,6 @@
             dmFrame.style.display = 'none';
             webVideo.style.display = 'none';
             webVideo.src = ""; dmFrame.src = "";
-
-            // --- LOGIKA PEMUTAR ---
 
             // 1. FILM (TMDB)
             if(id.startsWith('tmdb:') || /^\d{3,7}$/.test(id)) { 
@@ -404,7 +364,7 @@
                 title = "YouTube Video";
                 vidTitle.innerText = title;
 
-            // 3. VIDEO VIRAL (MP4 / VIDEY)
+            // 3. VIRAL
             } else if(id.includes('.mp4') || id.includes('twimg.com') || id.startsWith('videy:')) {
                 let vSrc = id;
                 let vPoster = "";
@@ -429,7 +389,7 @@
                 title = "Stream Video";
                 vidTitle.innerText = title;
 
-            // 5. DAILYMOTION (Default)
+            // 5. DEFAULT DM
             } else {
                 playerBox.className = "player-box mode-vertical";
                 dmFrame.src = `https://www.dailymotion.com/embed/video/${id}?autoplay=0&queue-enable=false&ui-logo=0&sharing-enable=false`;
@@ -439,7 +399,7 @@
 
             overlayLayer.style.display = 'flex';
 
-            // Recommended
+            // Sidebar Recom
             const sideList = document.getElementById('sideList');
             fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&page=2`).then(r=>r.json()).then(d=>{
                 let html=''; d.results.slice(0,5).forEach(m=>{
