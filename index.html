@@ -15,7 +15,7 @@
         :root { --bg: #0f0f0f; --surface: #1e1e1e; --text: #fff; --gray: #aaa; --red: #ff0000; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* ANTI COPY / SELECT */
+        /* ANTI COPY / SELECT (Mencegah Maling Konten) */
         body { 
             font-family: 'Roboto', sans-serif; 
             background-color: var(--bg); 
@@ -32,8 +32,10 @@
         .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 60px; background: rgba(15,15,15,0.98); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
         .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
         .logo span { color: var(--red); font-size: 24px; }
-        .btn-vip { background: var(--red); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: none; color: white; text-decoration: none; }
-        .btn-vip:hover { background: #cc0000; }
+        
+        /* TOMBOL GET APP (Highlight Utama) */
+        .btn-vip { background: var(--red); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: none; color: white; text-decoration: none; box-shadow: 0 0 10px rgba(255,0,0,0.5); transition: transform 0.2s; }
+        .btn-vip:hover { background: #cc0000; transform: scale(1.05); }
 
         /* CONTAINER */
         .wrapper { max-width: 1000px; margin: 0 auto; min-height: 90vh; }
@@ -54,7 +56,7 @@
 
         .player-box iframe, .player-box video { width: 100%; height: 100%; border: 0; display: block; position: absolute; top:0; left:0; }
 
-        /* OVERLAY FAKE PLAYER (Untuk Trigger Popunder) */
+        /* OVERLAY FAKE PLAYER (Trigger Popunder halus) */
         #overlayLayer { position: absolute; inset: 0; z-index: 20; background: #000; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         #overlayBackdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
         .play-btn-fake { position: relative; z-index: 21; width: 75px; height: 75px; background: rgba(229, 9, 20, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 25px rgba(229, 9, 20, 0.6); animation: pulse 2s infinite; }
@@ -68,7 +70,7 @@
         /* Iklan Native Style */
         .native-ad { background: #111; border: 1px dashed #333; border-radius: 8px; padding: 10px; margin: 20px 0; min-height: 120px; text-align: center; }
         
-        /* Tombol Smartlink */
+        /* Tombol Smartlink (Download Video) */
         .dl-btn { display: block; width: 100%; background: #fff; color: #000; text-align: center; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 16px; cursor: pointer; border: none; margin-bottom: 10px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(255,255,255,0.1); }
         .dl-btn:hover { background: #eee; }
         
@@ -174,11 +176,9 @@
         <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?4654540&101" alt="" border="0"></a></noscript>
     </div>
 
-    <script type="text/javascript" src="https://thinnerwithdrewforbear.com/90/6b/c8/906bc8f65d5da8ba2ea29c2fb6a38424.js"></script>
-
     <script>
-        const TMDB_KEY = "b9f961d942ecf6cb23575ffb5231ff13"; // API Key Publik TMDB
-        const DB_FILE = "videos.txt"; // Pastikan Anda punya file ini untuk video custom
+        const TMDB_KEY = "b9f961d942ecf6cb23575ffb5231ff13"; 
+        const DB_FILE = "videos.txt"; 
 
         const homeView = document.getElementById('homeView');
         const playerView = document.getElementById('playerView');
@@ -190,18 +190,15 @@
         const gridTarget = document.getElementById('gridTarget');
         const searchBox = document.getElementById('searchBox');
 
-        // Deteksi Parameter URL (?id=...)
         const urlParams = new URLSearchParams(window.location.search);
         const currentId = urlParams.get('id');
 
-        // Fungsi Trigger Player saat Cover diklik
+        // Fungsi Trigger Player saat Cover diklik (Trigger Popunder halus)
         function klikPlay() {
-            overlayLayer.style.display = 'none'; // Hilangkan cover
-            // Jika video MP4/Videy
+            overlayLayer.style.display = 'none'; 
             if(webVideo.style.display !== 'none') {
                 webVideo.play();
             } else {
-                // Jika Iframe (Dailymotion/Youtube), coba autoplay
                 const src = mainFrame.src;
                 if(!src.includes('autoplay=1')) {
                     mainFrame.src = src + (src.includes('?') ? '&' : '?') + 'autoplay=1';
@@ -217,11 +214,9 @@
             }
         }
 
-        // --- 1. LOAD HOMEPAGE ---
         async function loadHome() {
             let html = '';
-            
-            // A. Ambil dari Local videos.txt (Jika ada)
+            // Load Local
             try {
                 const r = await fetch(DB_FILE + '?t=' + Date.now());
                 if(r.ok) {
@@ -236,9 +231,8 @@
                         }
                     });
                 }
-            } catch(e) { console.log("No videos.txt found, skipping."); }
-
-            // B. Ambil Film Populer TMDB
+            } catch(e) {}
+            // Load TMDB
             try {
                 const rT = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}`);
                 const dT = await rT.json();
@@ -256,18 +250,13 @@
                     });
                 }
             } catch(e){}
-
             gridTarget.innerHTML = html;
         }
 
-        // Helper: Membuat Kartu Grid
         function createCard(id, title) {
             let thumb = 'https://via.placeholder.com/200x300/333/fff?text=VIDEO';
-            let mode = 'video-mode';
-            let tag = 'CLIP';
-            let color = '#2563eb';
+            let mode = 'video-mode'; let tag = 'CLIP'; let color = '#2563eb';
 
-            // Logika Thumbnail Pintar
             if(id.startsWith('videy:')) {
                 thumb = `https://cdn.videy.co/${id.replace('videy:','')}.jpg`;
                 mode = 'vert-mode'; tag = 'VIDEY'; color = '#e17055';
@@ -276,27 +265,22 @@
                 thumb = `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
                 mode = 'video-mode'; tag = 'YT'; color = '#d63031';
             } else if(id.startsWith('tmdb:') || /^\d{3,7}$/.test(id)) {
-                thumb = 'https://via.placeholder.com/200x300?text=Loading...'; // Nanti TMDB load async
+                thumb = 'https://via.placeholder.com/200x300?text=Loading...';
                 mode = 'poster-mode'; tag = 'FILM'; color = '#e62117';
             } else {
-                thumb = `https://www.dailymotion.com/thumbnail/video/${id}`;
-                tag = 'DM';
+                thumb = `https://www.dailymotion.com/thumbnail/video/${id}`; tag = 'DM';
             }
-
             return `<a href="?id=${id}" class="card"><div class="thumb ${mode}"><img src="${thumb}" loading="lazy"><div class="tag-source" style="background:${color}">${tag}</div></div><div class="card-t">${title}</div></a>`;
         }
 
-        // --- 2. PLAYER LOGIC (MESIN UTAMA) ---
         function renderPlayer(id) {
             homeView.style.display = 'none';
             playerView.style.display = 'block';
             mainFrame.style.display = 'none';
             webVideo.style.display = 'none';
             mainFrame.src = ""; webVideo.src = "";
-
             let title = "Watching Video";
             
-            // A. VIDEY (Vertical)
             if(id.startsWith('videy:')) {
                 const vid = id.replace('videy:', '');
                 playerBox.className = "player-box mode-vertical";
@@ -305,21 +289,16 @@
                 webVideo.style.display = 'block';
                 overlayLayer.style.backgroundImage = `url('${webVideo.poster}')`;
                 title = "Viral Video";
-            
-            // B. TMDB FILM (Landscape)
             } else if(id.startsWith('tmdb:') || /^\d{3,7}$/.test(id)) {
                 const tid = id.replace('tmdb:', '');
                 playerBox.className = "player-box mode-landscape";
                 mainFrame.src = `https://vidsrc.to/embed/movie/${tid}`;
                 mainFrame.style.display = 'block';
-                // Ambil judul asli
                 fetch(`https://api.themoviedb.org/3/movie/${tid}?api_key=${TMDB_KEY}`).then(r=>r.json()).then(d=>{ 
                     if(d.title) vidTitle.innerText = d.title;
                     if(d.backdrop_path) overlayLayer.style.backgroundImage = `url('https://image.tmdb.org/t/p/w780${d.backdrop_path}')`;
                 });
                 title = "Loading Movie...";
-
-            // C. YOUTUBE
             } else if(id.startsWith('yt:') || (id.length === 11 && !id.includes(':'))) {
                 const yid = id.replace('yt:', '');
                 playerBox.className = "player-box mode-landscape";
@@ -327,27 +306,21 @@
                 mainFrame.style.display = 'block';
                 overlayLayer.style.backgroundImage = `url('https://img.youtube.com/vi/${yid}/hqdefault.jpg')`;
                 title = "YouTube Video";
-
-            // D. DIRECT MP4 / TWITTER
             } else if(id.includes('.mp4')) {
                 playerBox.className = "player-box mode-vertical";
                 webVideo.src = id;
                 webVideo.style.display = 'block';
                 title = "Viral Clip";
-
-            // E. DAILYMOTION (Fallback)
             } else {
-                playerBox.className = "player-box mode-vertical"; // Asumsi DM sering portrait untuk konten viral
+                playerBox.className = "player-box mode-vertical";
                 mainFrame.src = `https://www.dailymotion.com/embed/video/${id}?autoplay=0&queue-enable=false&ui-logo=0&sharing-enable=false`;
                 mainFrame.style.display = 'block';
                 overlayLayer.style.backgroundImage = `url('https://www.dailymotion.com/thumbnail/video/${id}')`;
                 title = "Dailymotion Video";
             }
-
             vidTitle.innerText = title;
-            overlayLayer.style.display = 'flex'; // Tampilkan cover agar diklik (Adsterra Popunder)
+            overlayLayer.style.display = 'flex'; 
 
-            // Side Recommendations (Random Movie)
             const sideList = document.getElementById('sideList');
             fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&page=2`).then(r=>r.json()).then(d=>{
                 let h=''; d.results.slice(0,5).forEach(m=>{
@@ -356,17 +329,13 @@
                 sideList.innerHTML=h;
             });
         }
-
-        // Jalan!
         init();
 
-        // Search Function
         function doSearch() {
             const q = searchBox.value;
             if(q) {
                 document.getElementById('sectionTitle').innerText = "Search: " + q;
                 gridTarget.innerHTML = "Searching...";
-                // Panggil TMDB Search
                 fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}`)
                 .then(r=>r.json()).then(d=>{
                    let h = "";
