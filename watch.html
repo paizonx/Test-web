@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="referrer" content="no-referrer-when-downgrade" />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0f0f0f" />
+
+  <title>MovTubez</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --bg:#0f0f0f; --surface:#151515; --text:#fff; --red:#e50914; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:'Roboto',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+    a{ color:inherit; text-decoration:none; }
+
+    .navbar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 16px; height:60px;
+      background:rgba(15,15,15,0.95);
+      backdrop-filter:blur(10px);
+      position:sticky; top:0; z-index:100;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .logo{ font-size:20px; font-weight:900; display:flex; align-items:center; gap:6px; letter-spacing:.2px; }
+    .logo span{ color:var(--red); font-size:24px; }
+    .lang-pill{
+      font-size:11px; font-weight:900;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.06);
+      color:#ddd;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+    }
+
+    .wrapper{ max-width:860px; margin:0 auto; padding:14px 14px 40px; }
+
+    /* Portrait-first player */
+    .player-box{
+      position:relative;
+      width:100%;
+      aspect-ratio: 9/16;
+      max-height:78vh;
+      background:#000;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.10);
+      box-shadow:0 10px 40px rgba(0,0,0,0.55);
+    }
+    iframe{ width:100%; height:100%; border:0; display:block; }
+
+    /* Tap-to-start overlay */
+    .tap-overlay{
+      position:absolute; inset:0; z-index:5;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      background-size:cover;
+      background-position:center;
+    }
+    .tap-overlay::before{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.72));
+      backdrop-filter: blur(4px);
+    }
+    .play-ring{
+      position:relative; z-index:6;
+      width:74px; height:74px; border-radius:50%;
+      background:rgba(229,9,20,0.92);
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 0 28px rgba(229,9,20,0.55);
+      animation:pulse 2s infinite;
+    }
+    .play-ring::after{ content:"▶"; font-size:30px; margin-left:4px; }
+    @keyframes pulse{
+      0%{ box-shadow:0 0 0 0 rgba(229,9,20,0.55); }
+      70%{ box-shadow:0 0 0 18px rgba(229,9,20,0); }
+      100%{ box-shadow:0 0 0 0 rgba(229,9,20,0); }
+    }
+
+    /* Continue overlay (after 60s): click anywhere => redirect */
+    .gate{
+      position:absolute; inset:0; z-index:20;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      cursor:pointer;
+    }
+    .gate::before{
+      content:"";
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.72);
+      backdrop-filter: blur(6px);
+    }
+    .gate-card{
+      position:relative;
+      width:min(420px, 92vw);
+      background:rgba(21,21,21,0.96);
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.6);
+      text-align:center;
+      cursor:pointer;
+    }
+    .gate-btn{
+      width:100%;
+      border:none;
+      border-radius:14px;
+      padding:15px 14px;
+      font-weight:900;
+      font-size:14px;
+      text-transform:uppercase;
+      cursor:pointer;
+      background:#fff;
+      color:#000;
+      box-shadow:0 4px 18px rgba(255,255,255,0.10);
+    }
+    .gate-btn:active{ transform:scale(0.99); }
+
+    .warn{
+      margin-top:14px;
+      background:#2a1c00;
+      border:1px solid #5a3b00;
+      color:#ffd79a;
+      border-radius:14px;
+      padding:12px;
+      font-size:12px;
+      font-weight:800;
+      display:none;
+    }
+    code{
+      background:#1a1a1a;
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.10);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <a class="logo" href="/"><span>▶</span> MovTubez</a>
+    <div class="lang-pill" id="langPill">EN</div>
+  </nav>
+
+  <div class="wrapper">
+    <div class="player-box">
+      <iframe id="dmFrame"
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+        allowfullscreen
+        referrerpolicy="no-referrer"
+        src="">
+      </iframe>
+
+      <div class="tap-overlay" id="tapOverlay">
+        <div class="play-ring"></div>
+      </div>
+
+      <div class="gate" id="gate" aria-label="Continue overlay">
+        <div class="gate-card" id="gateCard">
+          <button class="gate-btn" id="gateBtn" type="button">CONTINUE TO WATCH</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn" id="warnBox">
+      Invalid or missing ID. Example: <code>?lang=en&id=x9n1o8e</code>
+    </div>
+  </div>
+
+  <script>
+    const COPY = {
+      en: { pill:"EN", btn:"CONTINUE TO WATCH", err:"Invalid or missing ID. Example: ?lang=en&id=x9n1o8e" },
+      es: { pill:"ES", btn:"CONTINUAR PARA VER", err:"ID inválido o faltante. Ejemplo: ?lang=es&id=x9n1o8e" }
+    };
+
+    const params = new URLSearchParams(location.search);
+    const id = (params.get("id") || "").trim();
+    const lang = (params.get("lang") || "").toLowerCase() === "es" ? "es" : "en";
+    const t = COPY[lang];
+
+    document.getElementById("langPill").textContent = t.pill;
+    document.getElementById("gateBtn").textContent = t.btn;
+
+    const ok = /^[a-zA-Z0-9_-]{5,32}$/.test(id);
+    const warnBox = document.getElementById("warnBox");
+    const dmFrame = document.getElementById("dmFrame");
+    const tapOverlay = document.getElementById("tapOverlay");
+    const gate = document.getElementById("gate");
+
+    const baseEmbed = "https://www.dailymotion.com/embed/video/" + encodeURIComponent(id);
+    const srcStopped = baseEmbed + "?autoplay=0&mute=1&queue-enable=false&ui-logo=0&sharing-enable=false&ui-theme=dark";
+    const srcPlay    = baseEmbed + "?autoplay=1&mute=0&queue-enable=false&ui-logo=0&sharing-enable=false&ui-theme=dark";
+
+    let gateTimer = null;
+    let started = false;
+
+    function goMoney() {
+      if (!ok) return;
+      const dest = new URL("/", location.origin);
+      dest.searchParams.set("lang", lang);
+      dest.searchParams.set("id", id);
+      location.href = dest.toString();
+    }
+
+    function showGateOnly() {
+      // IMPORTANT: video tetap memutar (tidak reload iframe)
+      gate.style.display = "flex";
+    }
+
+    if (!ok) {
+      warnBox.style.display = "block";
+      warnBox.textContent = t.err;
+      tapOverlay.style.display = "none";
+      gate.style.display = "none";
+    } else {
+      dmFrame.src = srcStopped; // initial
+      tapOverlay.style.backgroundImage =
+        "url('https://www.dailymotion.com/thumbnail/video/" + encodeURIComponent(id) + "')";
+    }
+
+    // Start preview
+    tapOverlay.addEventListener("click", () => {
+      if (!ok || started) return;
+      started = true;
+
+      dmFrame.src = srcPlay + "&_=" + Date.now();
+      tapOverlay.style.display = "none";
+
+      // after 60s: show continue overlay (video continues behind)
+      gateTimer = setTimeout(showGateOnly, 60 * 1000);
+    });
+
+    // Gate click anywhere => money page
+    gate.addEventListener("click", (e) => {
+      e.preventDefault();
+      goMoney();
+    }, { capture: true });
+
+    // Button also goes to money page
+    document.getElementById("gateBtn").addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      goMoney();
+    });
+
+    window.addEventListener("beforeunload", () => {
+      if (gateTimer) clearTimeout(gateTimer);
+    });
+  </script>
+</body>
+</html>
